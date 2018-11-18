@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['u',['u',['../structvalue.html#a53576468b6abc236139f00601193e215',1,'value::u()'],['../structconstant__pool__info.html#aaed3721ae12e18f5c458a3675ad943f2',1,'constant_pool_info::u()'],['../structattribute__info.html#aa20b073d60b86b4b2021b62ef29da2e3',1,'attribute_info::u()']]],
+  ['u1read',['u1Read',['../leitor__exibidor_8h.html#afdb3f0a206a81f81e556c89bc249d59d',1,'leitor_exibidor.h']]],
+  ['u2read',['u2Read',['../leitor__exibidor_8h.html#a501e3162237ebdac3b62689465ab2beb',1,'leitor_exibidor.h']]],
+  ['u4read',['u4Read',['../leitor__exibidor_8h.html#a2421ae4d8b57f500a2f9fc6873d4a43b',1,'leitor_exibidor.h']]],
+  ['unknown',['UNKNOWN',['../leitor__exibidor_8h.html#ac1ae4add974b9cfc6b5aaf8a578f01ab',1,'leitor_exibidor.h']]],
+  ['unloadarrays',['unloadArrays',['../jvm_8h.html#a11082622192ced5590cc9358a71cb5c0',1,'jvm.h']]],
+  ['unloadattribute',['unloadAttribute',['../leitor__exibidor_8h.html#a4776f0e89c589669144e6d61ded2a944',1,'leitor_exibidor.h']]],
+  ['unloadclass',['unloadClass',['../jvm_8h.html#a7d7cfaabe98fd05464415007f418237d',1,'jvm.h']]],
+  ['unloadclassdata',['unloadClassData',['../jvm_8h.html#a472656332c51e875d96f6bec1bf5ee96',1,'jvm.h']]],
+  ['unloadclassfile',['unloadClassFile',['../leitor__exibidor_8h.html#ab045329d789cca123e30848676a46e33',1,'leitor_exibidor.h']]],
+  ['unloadconstantpool',['unloadConstantPool',['../leitor__exibidor_8h.html#a30b7d0b40084e6d94eae55ccdec4a7cf',1,'leitor_exibidor.h']]],
+  ['unloadfields',['unloadFields',['../leitor__exibidor_8h.html#a0022fb792a8fc84fbbe8a811bddd8854',1,'leitor_exibidor.h']]],
+  ['unloadframe',['unloadFrame',['../jvm_8h.html#a2ccce90b48c1089f12b95b4fd703dd94',1,'jvm.h']]],
+  ['unloadheap',['unloadHeap',['../jvm_8h.html#a43ba0085e39bef5ad91db88ef5f722a8',1,'jvm.h']]],
+  ['unloadjvmstack',['unloadJvmStack',['../jvm_8h.html#a02ae047d259fdc2f6f35adb0c34eace9',1,'jvm.h']]],
+  ['unloadmethodarea',['unloadMethodArea',['../jvm_8h.html#a1a11b28cb2f8d049641217cb9df8da06',1,'jvm.h']]],
+  ['unloadmethods',['unloadMethods',['../leitor__exibidor_8h.html#a1d2afacdfa3d66f5b5a3e9039af4abba',1,'leitor_exibidor.h']]],
+  ['unloadobjects',['unloadObjects',['../jvm_8h.html#aa3a38555d82c5f90af87d0ca5cf52df5',1,'jvm.h']]],
+  ['unloadoperandstack',['unloadOperandStack',['../jvm_8h.html#a0e1e95eb9ddee809e3b283978f4ab56f',1,'jvm.h']]],
+  ['unloadthreads',['unloadThreads',['../jvm_8h.html#a5ba16b36c247e82ec9867c19a2bf8d5c',1,'jvm.h']]],
+  ['unloadvariables',['unloadVariables',['../jvm_8h.html#a77ee8ab4ed4957fd8784e78dba527658',1,'jvm.h']]],
+  ['utf8',['Utf8',['../structconstant__pool__info.html#a96e0b9f721cf1356d3f8437503102120',1,'constant_pool_info']]]
+];
