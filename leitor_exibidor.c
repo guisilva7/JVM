@@ -936,9 +936,9 @@ void showInterfaces(ClassFile * cf, FILE * saida)
 // imprime fields do ClassFile
 void showFields(ClassFile * cf, FILE * saida)
 {
-    fprintf(saida,"\n#Fields\n");
+    fprintf(saida,"\n#Fields de prontera\n");
     // imprime numero de fields
-    fprintf(saida,"Member count:\t\t\t\t%" PRIu16 "\n", cf->fields_count);
+    fprintf(saida,"Member count:\t%" PRIu16 "\n", cf->fields_count);
     // para cada field
     for(uint16_t i = 0; i < cf->fields_count; i++)
     {
@@ -970,13 +970,13 @@ void showFields(ClassFile * cf, FILE * saida)
             exit(EXIT_FAILURE);
         }
         // printa o descriptor
-        fprintf(saida,"\tDescriptor:\t\tcp_info #%" PRIu16, (cf->fields+i)->descriptor_index);
+        fprintf(saida,"\tDescriptor:\tcp_info #%" PRIu16, (cf->fields+i)->descriptor_index);
         fprintf(saida, "\t<");
         printConstUtf8(constPool, saida);
         fprintf(saida, ">\n");
         
         // printa acess_flags em hexadecimal 
-        fprintf(saida,"\tAccess Flags:\t\t0x%.4" PRIx16 "\t\t[", (cf->fields+i)->access_flags);
+        fprintf(saida,"\tAccess Flags:\t0x%.4" PRIx16 "\t[", (cf->fields+i)->access_flags);
         uint16_t access_flags = (cf->fields+i)->access_flags;
         // o access_flags eh um campo de 16 bits
         //em que cada bit significa uma flag
@@ -1023,7 +1023,7 @@ void showFields(ClassFile * cf, FILE * saida)
         }
         fprintf(saida,"]\n");
         
-        fprintf(saida,"\n\tField's attributes count:\t%" PRIu16 "\n", (cf->fields+i)->attributes_count);
+        fprintf(saida,"\n\tNumeros de atributos no field:\t%" PRIu16 "\n", (cf->fields+i)->attributes_count);
         field_info * fd_in = (cf->fields+i);
         showAttributes(fd_in, NULL, NULL, cf, saida);
     }
@@ -1033,9 +1033,9 @@ void showFields(ClassFile * cf, FILE * saida)
 // imprime methods do ClassFile
 void showMethods(ClassFile * cf, FILE * saida)
 {
-    fprintf(saida,"\n#Methods\n");
+    fprintf(saida,"\n#Methods de payon\n");
     // imprime numero de methods
-    fprintf(saida,"Member count:\t\t\t\t%" PRIu16 "\n", cf->methods_count);
+    fprintf(saida,"Member count:\t%" PRIu16 "\n", cf->methods_count);
     // para cada method
     for(uint16_t i = 0; i < cf->methods_count; i++)
     {
@@ -1053,12 +1053,12 @@ void showMethods(ClassFile * cf, FILE * saida)
         printConstUtf8(constPool, saida);
         fprintf(saida, "\n");
         // printa o name
-        fprintf(saida,"Name:\t\t\t\t\t\tcp_info #%" PRIu16, (cf->methods+i)->name_index);
+        fprintf(saida,"Name:\t\tcp_info #%" PRIu16, (cf->methods+i)->name_index);
         fprintf(saida, "\t<");
         printConstUtf8(constPool, saida);
         fprintf(saida, ">\n");
         // printa o descriptor
-        fprintf(saida,"Descriptor:\t\t\t\t\tcp_info #%" PRIu16, (cf->methods+i)->descriptor_index);
+        fprintf(saida,"Descriptor:\tcp_info #%" PRIu16, (cf->methods+i)->descriptor_index);
         uint16_t descriptor_index = (cf->methods+i)->descriptor_index;
         constPool = cf->constant_pool + descriptor_index - 1;
         // se nao for CONSTANT_Utf8
@@ -1073,7 +1073,7 @@ void showMethods(ClassFile * cf, FILE * saida)
             fprintf(saida, ">\n");
         }
         // printa access_flags
-        fprintf(saida,"Access flags:\t\t\t\t0x%.4" PRIx16 "\t\t[", (cf->methods+i)->access_flags);
+        fprintf(saida,"Access flags:\t0x%.4" PRIx16 "\t\t[", (cf->methods+i)->access_flags);
         uint16_t access_flags = (cf->methods+i)->access_flags;
         // o access_flags eh um campo de 16 bits
         //em que cada bit significa uma flag
@@ -1140,7 +1140,7 @@ void showMethods(ClassFile * cf, FILE * saida)
         }
         fprintf(saida,"]\n");
         // printa os attributes
-        fprintf(saida,"\nMethods's attr count:\t\t%" PRIu16 "\n", (cf->methods+i)->attributes_count);
+        fprintf(saida,"\nQuantidade de atributos dos metodos:\t%" PRIu16 "\n", (cf->methods+i)->attributes_count);
         method_info *   mt_in = (cf->methods+i);
         showAttributes(NULL, mt_in, NULL, cf, saida);
     }
@@ -1156,21 +1156,21 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
     // se for attributes do fields
     if(fd_in != NULL)
     {
-        fprintf(saida,"\n\tFields Attributes\n");
+        fprintf(saida,"\n\t>>Fields Attributes<<\n");
         attributes_count = fd_in->attributes_count;
         attributes = fd_in->attributes;
         attribute_tab = METHOD_FIELD;
     }
     // se for attributes do method
     else if(mt_in != NULL){
-        fprintf(saida,"\n\tMethods Attributes\n");
+        fprintf(saida,"\n\n\t>>Methods Attributes<<\n");
         attributes_count = mt_in->attributes_count;
         attributes = mt_in->attributes;
         attribute_tab = METHOD_FIELD;
     }
     // se for attributes do attributes code
     else if(attr_in != NULL){
-        fprintf(saida,"\n\tAttribute's Code Attributes\n");
+        fprintf(saida,"\n\n\t>>Attribute's Code Attributes<<\n");
         attributes_count = attr_in->u.Code.attributes_count;
         attributes = attr_in->u.Code.attributes;
         attribute_tab = ATTRIBUTE;
@@ -1207,22 +1207,6 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     printConstUtf8(constPool, saida);
                     fprintf(saida, "\n");
                     
-                    fprintf(saida, "Generic info:\n");
-                    fprintf(saida, "\tAttribute name index:\tcp_info #%" PRIu16, attributes_aux->attribute_name_index);
-                    fprintf(saida, "\t");
-                    printConstUtf8(constPool, saida);
-                    fprintf(saida, "\n");
-                    
-                    fprintf(saida, "\tAttribute lenght:\t%" PRIu16 "\n", attributes_aux->attribute_length);
-                    fprintf(saida, "Specific info:\n");
-                    break;
-                case    METHOD_FIELD:
-                    fprintf(saida,"\n");
-                    fprintf(saida, "[%" PRIu16 "]", i);
-                    fprintf(saida, "\t");
-                    printConstUtf8(constPool, saida);
-                    fprintf(saida, "\n");
-                    
                     fprintf(saida, "\tGeneric info:\n");
                     fprintf(saida, "\t\tAttribute name index:\tcp_info #%" PRIu16, attributes_aux->attribute_name_index);
                     fprintf(saida, "\t");
@@ -1232,9 +1216,25 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     fprintf(saida, "\t\tAttribute lenght:\t%" PRIu16 "\n", attributes_aux->attribute_length);
                     fprintf(saida, "\tSpecific info:\n");
                     break;
+                case    METHOD_FIELD:
+                    fprintf(saida,"\n");
+                    fprintf(saida, "[%" PRIu16 "]", i);
+                    fprintf(saida, "\t");
+                    printConstUtf8(constPool, saida);
+                    fprintf(saida, "\n");
+                    
+                    fprintf(saida, "\t\tGeneric info:\n");
+                    fprintf(saida, "\t\t\tAttribute name index:\tcp_info #%" PRIu16, attributes_aux->attribute_name_index);
+                    fprintf(saida, "\t");
+                    printConstUtf8(constPool, saida);
+                    fprintf(saida, "\n");
+                    
+                    fprintf(saida, "\t\t\tAttribute lenght:\t%" PRIu16 "\n", attributes_aux->attribute_length);
+                    fprintf(saida, "\t\tSpecific info:\n");
+                    break;
                 case    ATTRIBUTE:
                     fprintf(saida,"\n");
-                    fprintf(saida, "\t[%" PRIu16 "]", i);
+                    fprintf(saida, "[%" PRIu16 "]", i);
                     fprintf(saida, "\t");
                     printConstUtf8(constPool, saida);
                     fprintf(saida, "\n");
@@ -1991,7 +1991,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         break;
                 }
             }
-            fprintf(saida, "\n\t\t\tException Table Length:\t\t%" PRId16 "\n", attributes_aux->u.Code.exception_table_length);
+            fprintf(saida, "\n\t\t\tTamanho da tabela de excecao:\t\t%" PRId16 "\n", attributes_aux->u.Code.exception_table_length);
             if(attributes_aux->u.Code.exception_table_length){
                 fprintf(saida, "\n\t\t\tException table:\n");
                 fprintf(saida, "\t\t\tNr.\tstart_pc\tend_pc\thandler_pc\tcatch_type\tverbose\n");
@@ -2012,9 +2012,9 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                 }
             }
             fprintf(saida, "\n\t\tMiscellaneous:\n");
-            fprintf(saida, "\t\t\t\tMax Stack:\t\t%" PRId16 "\n", attributes_aux->u.Code.max_stack);
-            fprintf(saida, "\t\t\t\tMax locals:\t%" PRId16 "\n", attributes_aux->u.Code.max_locals);
-            fprintf(saida, "\t\t\t\tCode length:\t\t\t%" PRId32 "\n", attributes_aux->u.Code.code_length);
+            fprintf(saida, "\t\t\tMax Stack:\t%" PRId16 "\n", attributes_aux->u.Code.max_stack);
+            fprintf(saida, "\t\t\tMax locals:\t%" PRId16 "\n", attributes_aux->u.Code.max_locals);
+            fprintf(saida, "\t\t\tCode length:\t%" PRId32 "\n", attributes_aux->u.Code.code_length);
             fprintf(saida,"\n\t\tCode attributes count:\t%" PRId16 "\n", attributes_aux->u.Code.attributes_count);
             showAttributes(NULL, NULL, attributes_aux, cf, saida);
             break;
@@ -2293,7 +2293,7 @@ void printConstantNameAndType(ClassFile * cf, constant_pool_info * constPool, ch
                     fprintf(saida, "%c" , cp_a0->u.Utf8.bytes[i]);
                 }
             }
-    } 
+    }
 }
 
 // libera a memoria que fora alocada para class file
