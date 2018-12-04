@@ -1,12 +1,10 @@
 #include "checker.h"
 
 /*==========================================*/
-// função VerBytecode
-void VerBytecode(attribute_info *attr, ClassFile *arq) {
+// função VerificaBytecode
+void VerificaBytecode(attribute_info *attr, ClassFile *arq) {
 
-}  // fim da funcao VerBytecode
-
-
+}  // fim da funcao VerificaBytecode
 
 /*==========================================*/
 // função DescritorCampo
@@ -68,7 +66,7 @@ bool DescritorMetodo(constant_pool_info *cp, uint16_t index) {
 			bytes++;
 		}
 		if (index == comprimento) {
-			puts("erro tipo retorno");
+			puts("Error: tipo retorno");
 			return false;
 		}
 	}
@@ -88,7 +86,7 @@ bool DescritorMetodo(constant_pool_info *cp, uint16_t index) {
 			if (index == (comprimento - 1)) {
 				return true;
 			}
-			puts("erro tipo retorno");
+			puts("Error: tipo retorno");
 			return false;
 			break;
 		case REF_INST:;
@@ -97,7 +95,7 @@ bool DescritorMetodo(constant_pool_info *cp, uint16_t index) {
 
 
 			if ((comprimento - index) < 3 || !strchr(string, ';')) {
-				puts("Erro ref inst");
+				puts("Error: ref inst");
 				return false;
 			}
 			index += strlen(string);
@@ -108,18 +106,18 @@ bool DescritorMetodo(constant_pool_info *cp, uint16_t index) {
 				return true;
 			}
 			/*			printConstUtf8(cp, stdout);*/
-			puts("erro ref inst retorno");
+			puts("Error: ref inst retorno");
 			return false;
 			break;
 		case 'V':
 			if (!returnDescriptor) {
-				puts("erro void parametro");
+				puts("Error: void parametro");
 				return false;
 			}
 			if (index == (comprimento - 1)) {
 				return true;
 			}
-			puts("erro void retorno");
+			puts("Error: void retorno");
 			return false;
 			break;
 		default:
@@ -127,11 +125,11 @@ bool DescritorMetodo(constant_pool_info *cp, uint16_t index) {
 				   index, comprimento);
 			printf("%c\n", *bytes);
 			printConstUtf8(cp, stdout);
-			puts("erro tipo desconhecido");
+			puts("Error: tipo desconhecido");
 			return false;
 	}
 }
-// fim da função DescritorCampo
+// fim da função DescritorMetodo
 
 
 /*==========================================*/
@@ -142,7 +140,7 @@ void AcessoFlags(ClassFile *arq) {
 	// Testando flags de classes
 	access_flags = arq->access_flags;
 	if (access_flags & 0xF9CE) {
-		puts("erro de acesso a flags de classe");
+		puts("Error: de acesso a flags de classe");
 		exit(EXIT_FAILURE);
 	}
 
@@ -150,7 +148,7 @@ void AcessoFlags(ClassFile *arq) {
 	for (uint16_t i = 0; i < arq->fields_count; i++) {
 		access_flags = (arq->fields + i)->access_flags;
 		if (access_flags & 0xFF20) {
-			puts("erro de acesso a flags de fields");
+			puts("Error: de acesso a flags de fields");
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -159,7 +157,7 @@ void AcessoFlags(ClassFile *arq) {
 	for (uint16_t i = 0; i < arq->methods_count; i++) {
 		access_flags = (arq->methods + i)->access_flags;
 		if (access_flags & 0xF2C0) {
-			puts("erro de acesso a flags de method");
+			puts("Error: de acesso a flags de method");
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -168,10 +166,10 @@ void AcessoFlags(ClassFile *arq) {
 
 
 /*==========================================*/
-// função ArquivoClassverificador
-void ArquivoClassverificador(ClassFile *arq) {
+// função VerificadorArquivoClass
+void VerificadorArquivoClass(ClassFile *arq) {
 	// checa inconsistências na Constant Pool
-	verifyConstantPool(arq);
+	VerificaConstantPool(arq);
 
 	// checa flags inválidas
 	AcessoFlags(arq);
@@ -181,7 +179,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 	// checa this_class
 	cp_auxiliar = arq->constant_pool + arq->this_class - 1;
 	if (cp_auxiliar->tag != CONSTANT_Class) {
-		puts("erro indice this_class invalido");
+		puts("Error: indice this_class invalido");
 		exit(EXIT_FAILURE);
 	}
 
@@ -189,7 +187,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 	if (arq->super_class) {
 		cp_auxiliar = arq->constant_pool + arq->super_class - 1;
 		if (cp_auxiliar->tag != CONSTANT_Class) {
-			puts("erro  indice de superclasse invalido");
+			puts("Error:  indice de superclasse invalido");
 			exit(EXIT_FAILURE);
 		}
 	} else {
@@ -200,7 +198,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 		char *string = (char *)cp_auxiliar->u.Utf8.bytes;
 		string[cp_auxiliar->u.Utf8.length] = '\0';
 		if (strcmp(string, "java/lang/Object")) {
-			puts("erro nao possui super_class");
+			puts("Error: nao possui super_class");
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -209,7 +207,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 	for (uint16_t i = 0; i < arq->interfaces_count; i++) {
 		cp_auxiliar = arq->constant_pool + (*(arq->interfaces + i)) - 1;
 		if (cp_auxiliar->tag != CONSTANT_Class) {
-			puts("erro interface invalidoa");
+			puts("Error: interface invalidoa");
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -219,13 +217,13 @@ void ArquivoClassverificador(ClassFile *arq) {
 		uint16_t name_index = (arq->fields + i)->name_index;
 		cp_auxiliar = arq->constant_pool + name_index - 1;
 		if (cp_auxiliar->tag != CONSTANT_Utf8) {
-			puts("erro  field name_index");
+			puts("Error:  field name_index");
 			exit(EXIT_FAILURE);
 		}
 		uint16_t descriptor_index = (arq->fields + i)->descriptor_index;
 		cp_auxiliar = arq->constant_pool + descriptor_index - 1;
 		if (cp_auxiliar->tag != CONSTANT_Utf8) {
-			puts("erro  field descriptor_index");
+			puts("Error:  field descriptor_index");
 			exit(EXIT_FAILURE);
 		}
 		// checa atributos de fields
@@ -235,7 +233,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 					 ((arq->fields + i)->attributes + j)->attribute_name_index -
 					 1;
 			if (cp_auxiliar->tag != CONSTANT_Utf8) {
-				puts("erro  field attribute_indicador_nome");
+				puts("Error:  field attribute_indicador_nome");
 				exit(EXIT_FAILURE);
 			}
 			switch (getAttributeType(((arq->fields + i)->attributes + j), arq)) {
@@ -245,13 +243,13 @@ void ArquivoClassverificador(ClassFile *arq) {
 				case LINE_NUMBER_TABLE:
 				case LOCAL_VARIABLE_TABLE:
 				case SOURCE_FILE:
-					puts("erro atributo de field invalido");
+					puts("Error: atributo de field invalido");
 					exit(EXIT_FAILURE);
 					break;
 				case DEPRECATED:
 				case SYNTHETIC:
 					if (((arq->fields + i)->attributes + j)->attribute_length) {
-						puts("erro atributo invalido");
+						puts("Error: atributo invalido");
 						exit(EXIT_FAILURE);
 					}
 					break;
@@ -264,14 +262,14 @@ void ArquivoClassverificador(ClassFile *arq) {
 		uint16_t name_index = (arq->methods + i)->name_index;
 		cp_auxiliar = arq->constant_pool + name_index;
 		if (cp_auxiliar->tag != CONSTANT_Utf8) {
-			puts("erro method name_index invalido ");
+			puts("Error: method name_index invalido ");
 			exit(EXIT_FAILURE);
 		}
 
 		uint16_t descriptor_index = (arq->methods + i)->descriptor_index;
 		cp_auxiliar = arq->constant_pool + descriptor_index;
 		if (cp_auxiliar->tag != CONSTANT_Utf8) {
-			puts("erro method descriptor_index invalido ");
+			puts("Error: method descriptor_index invalido ");
 			exit(EXIT_FAILURE);
 		}
 
@@ -282,12 +280,12 @@ void ArquivoClassverificador(ClassFile *arq) {
 					 ((arq->methods + i)->attributes + j)->attribute_name_index -
 					 1;
 			if (cp_auxiliar->tag != CONSTANT_Utf8) {
-				puts("erro attribute_indicador_nome invalido");
+				puts("Error: attribute_indicador_nome invalido");
 				exit(EXIT_FAILURE);
 			}
 			switch (getAttributeType(((arq->methods + i)->attributes + j), arq)) {
 				case CODE:
-					VerBytecode(((arq->methods + i)->attributes + j), arq);
+					VerificaBytecode(((arq->methods + i)->attributes + j), arq);
 					// checa atributos do atributo Code
 					uint16_t code_attributes_count =
 						((arq->methods + i)->attributes +
@@ -299,7 +297,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 						cp_auxiliar = arq->constant_pool +
 								 attr->attribute_name_index - 1;
 						if (cp_auxiliar->tag != CONSTANT_Utf8) {
-							puts("erro attribute_indicador_nome invalido ");
+							puts("Error: attribute_indicador_nome invalido ");
 							exit(EXIT_FAILURE);
 						}
 						switch (getAttributeType(attr, arq)) {
@@ -309,7 +307,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 							case INNER_CLASSES:
 							case SOURCE_FILE:
 							case SYNTHETIC:
-								puts("erro codigo do atributo invalido");
+								puts("Error: codigo do atributo invalido");
 								exit(EXIT_FAILURE);
 								break;
 							case LINE_NUMBER_TABLE:
@@ -324,7 +322,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 												  .local_variable_table)
 												 ->name_index;
 									if (cp_auxiliar->tag != CONSTANT_Utf8) {
-										puts("erro local invalido "
+										puts("Error: local invalido "
 											 "variable table name_index");
 										exit(EXIT_FAILURE);
 									}
@@ -333,12 +331,12 @@ void ArquivoClassverificador(ClassFile *arq) {
 												  .local_variable_table)
 												 ->descriptor_index;
 									if (cp_auxiliar->tag != CONSTANT_Utf8) {
-										puts("erro  local invalido "
+										puts("Error:  local invalido "
 											 "variable table descriptor_index");
 										exit(EXIT_FAILURE);
 									}
 									if (!DescritorCampo(0,cp_auxiliar)) {
-										puts("erro field invalido  "
+										puts("Error: field invalido  "
 											 "descriptor");
 										exit(EXIT_FAILURE);
 									}
@@ -357,12 +355,12 @@ void ArquivoClassverificador(ClassFile *arq) {
 							   j)->u.Exceptions.exception_index_table +
 							  k);
 						if (!exception_index) {
-							puts("erro indice invalido");
+							puts("Error: indice invalido");
 							exit(EXIT_FAILURE);
 						}
 						cp_auxiliar = arq->constant_pool + exception_index - 1;
 						if (cp_auxiliar->tag != CONSTANT_Class) {
-							puts("erro indice invalido");
+							puts("Error: indice invalido");
 							exit(EXIT_FAILURE);
 						}
 					}
@@ -371,13 +369,13 @@ void ArquivoClassverificador(ClassFile *arq) {
 				case LINE_NUMBER_TABLE:
 				case LOCAL_VARIABLE_TABLE:
 				case SOURCE_FILE:
-					puts("erro atributo de metodo invalido");
+					puts("Error: atributo de metodo invalido");
 					exit(EXIT_FAILURE);
 					break;
 				case DEPRECATED:
 				case SYNTHETIC:
 					if (((arq->methods + i)->attributes + j)->attribute_length) {
-						puts("erro atributo de metodo invalido");
+						puts("Error: atributo de metodo invalido");
 						exit(EXIT_FAILURE);
 					}
 					break;
@@ -390,7 +388,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 		cp_auxiliar = arq->constant_pool +
 				 (arq->attributes + i)->attribute_name_index - 1;
 		if (cp_auxiliar->tag != CONSTANT_Utf8) {
-			puts("erro  invalido class attribute_indicador_nome");
+			puts("Error:  invalido class attribute_indicador_nome");
 			exit(EXIT_FAILURE);
 		}
 		switch (getAttributeType(arq->attributes + i, arq)) {
@@ -398,7 +396,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 			case EXCEPTIONS:
 			case LINE_NUMBER_TABLE:
 			case LOCAL_VARIABLE_TABLE:
-				puts("erro atributo de classe invalido");
+				puts("Error: atributo de classe invalido");
 				exit(EXIT_FAILURE);
 				break;
 			case INNER_CLASSES:;
@@ -410,56 +408,56 @@ void ArquivoClassverificador(ClassFile *arq) {
 					if (!(class->inner_class_info_index) ||
 						!(class->outer_class_info_index) ||
 						!(class->inner_name_index)) {
-						puts("erro de classe invalido");
+						puts("Error: de classe invalido");
 						exit(EXIT_FAILURE);
 					}
 					cp_auxiliar =
 						arq->constant_pool + class->inner_class_info_index - 1;
 					if (cp_auxiliar->tag != CONSTANT_Class) {
-						puts("erro  invalido: inner_class_info_index");
+						puts("Error:  invalido: inner_class_info_index");
 						exit(EXIT_FAILURE);
 					}
 					cp_auxiliar =
 						arq->constant_pool + class->outer_class_info_index - 1;
 					if (cp_auxiliar->tag != CONSTANT_Class) {
-						puts("erro  invalido: outer_class_info_index");
+						puts("Error:  invalido: outer_class_info_index");
 						exit(EXIT_FAILURE);
 					}
 					cp_auxiliar = arq->constant_pool + class->inner_name_index - 1;
 					if (cp_auxiliar->tag != CONSTANT_Utf8) {
-						puts("erro  invalido: inner_indicador_nome");
+						puts("Error:  invalido: inner_indicador_nome");
 						exit(EXIT_FAILURE);
 					}
 					uint16_t access_flags = class->inner_class_access_flags;
 					if (access_flags & 0xF9E0) {
-						puts("erro  invalido: inner_class_access_flags");
+						puts("Error:  invalido: inner_class_access_flags");
 						exit(EXIT_FAILURE);
 					}
 				}
 				break;
 			case SOURCE_FILE:
 				if ((arq->attributes + i)->attribute_length != 2) {
-					puts("erro atributo de arquivo fonte invalido ");
+					puts("Error: atributo de arquivo fonte invalido ");
 					exit(EXIT_FAILURE);
 				}
 				cp_auxiliar = arq->constant_pool +
 						 (arq->attributes + i)->u.SourceFile.sourcefile_index -
 						 1;
 				if (cp_auxiliar->tag != CONSTANT_Utf8) {
-					puts("erro  invalido: sourcefile_index");
+					puts("Error:  invalido: sourcefile_index");
 					exit(EXIT_FAILURE);
 				}
 				break;
 			case DEPRECATED:
 			case SYNTHETIC:
 				if ((arq->attributes + i)->attribute_length) {
-					puts("erro atributo de classe invalido");
+					puts("Error: atributo de classe invalido");
 					exit(EXIT_FAILURE);
 				}
 				break;
 		}
 	}
-}  // fim da funcao ArquivoClassverificador
+}  // fim da funcao VerificadorArquivoClass
 
 /*==========================================*/
 // função verifyOverrideMethodFinal
@@ -467,7 +465,7 @@ void VerificadorOverride(ClassFile *arq, JVM *jvm) {
 	// verifica se método final é sobrecarregado
 	constant_pool_info *cp_auxiliar = NULL;
 	for (uint16_t count = 0; count < arq->methods_count; count++) {
-        
+
 		cp_auxiliar = (arq->methods + count)->name_index + arq->constant_pool - 1;
 		char *nome_metodo = (char *)cp_auxiliar->u.Utf8.bytes;
 		nome_metodo[cp_auxiliar->u.Utf8.length] = '\0';
@@ -482,7 +480,7 @@ void VerificadorOverride(ClassFile *arq, JVM *jvm) {
 				if (!strcmp(nome_metodo, super_nome_metodo)) {
 					if (((cd_super->classfile)->methods + count)->access_flags ==
 						ACC_FINAL) {
-						puts("Erro de override metodo final");
+						puts("Error: de override metodo final");
 						exit(EXIT_FAILURE);
 					}
 				}
@@ -499,14 +497,14 @@ void SuperVerificador(ClassFile *arq, JVM *jvm) {
 	CLASS_DATA *cd_super;
 	if ((cd_super = getSuperClass(arq, jvm))) {
 		if ((cd_super->classfile)->access_flags & ACC_FINAL) {
-			puts("erro de herança de super classe final");
+			puts("Error: de herança de super classe final");
 			exit(EXIT_FAILURE);
 		}
 	}
 }
 /*==========================================*/
-// função verifyConstantPool
-void verifyConstantPool(ClassFile *arq) {
+// função VerificaConstantPool
+void VerificaConstantPool(ClassFile *arq) {
 	// Verify Constant Pool
 	constant_pool_info *cp;
 	for (uint16_t i = 0; i < (arq->constant_pool_count - 1); i++) {
@@ -515,7 +513,7 @@ void verifyConstantPool(ClassFile *arq) {
 			case CONSTANT_Class:
 				if ((arq->constant_pool + cp->u.Class.name_index - 1)->tag !=
 					CONSTANT_Utf8) {
-					puts("erro do nome de index de classe");
+					puts("Error: do nome de index de classe");
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -524,12 +522,12 @@ void verifyConstantPool(ClassFile *arq) {
 			case CONSTANT_InterfaceMethodref:
 				if ((arq->constant_pool + cp->u.Ref.name_index - 1)->tag !=
 					CONSTANT_Class) {
-					puts("erro: referencia ao indice de classe invalido");
+					puts("Error:: referencia ao indice de classe invalido");
 					exit(EXIT_FAILURE);
 				}
 				if ((arq->constant_pool + cp->u.Ref.name_and_type_index -
 					 1)->tag != CONSTANT_NameAndType) {
-					puts("erro de name_and_type index");
+					puts("Error: de name_and_type index");
 					exit(EXIT_FAILURE);
 				}
 				if (cp->tag != CONSTANT_Fieldref) {
@@ -537,15 +535,15 @@ void verifyConstantPool(ClassFile *arq) {
 					cp_auxiliar = arq->constant_pool + cp->u.Ref.name_and_type_index - 1;
 					cp_auxiliar = arq->constant_pool + cp_auxiliar->u.NameAndType.descriptor_index - 1;
 					if (cp_auxiliar->tag != CONSTANT_Utf8) {
-						puts("erro de indice de descritor");
+						puts("Error: de indice de descritor");
 						exit(EXIT_FAILURE);
 					}
 					if ((cp_auxiliar->u.Utf8).length < 3) {
-						puts("erro de indice de descritor");
+						puts("Error: de indice de descritor");
 						exit(EXIT_FAILURE);
 					}
 					if (((cp_auxiliar->u.Utf8).bytes)[0] != '(') {
-						puts("erro de indice de descritor");
+						puts("Error: de indice de descritor");
 						exit(EXIT_FAILURE);
 					}
 				}
@@ -565,18 +563,18 @@ void verifyConstantPool(ClassFile *arq) {
 			case CONSTANT_NameAndType:
 				if ((arq->constant_pool + cp->u.NameAndType.name_index -
 					 1)->tag != CONSTANT_Utf8) {
-					puts("erro indice NameAndType  invalido");
+					puts("Error: indice NameAndType  invalido");
 					exit(EXIT_FAILURE);
 				}
 				constant_pool_info *cp_auxiliar;
 				if ((cp_auxiliar = arq->constant_pool +
 							  cp->u.NameAndType.descriptor_index - 1)
 						->tag != CONSTANT_Utf8) {
-					puts("erro NameAndType descriptor_index invalido");
+					puts("Error: NameAndType descriptor_index invalido");
 					exit(EXIT_FAILURE);
 				}
 				if (cp_auxiliar->u.Utf8.length == 0) {
-					puts("erro desctitor invalido");
+					puts("Error: descritor invalido");
 					exit(EXIT_FAILURE);
 				}
 				uint16_t comprimento = cp_auxiliar->u.Utf8.length;
@@ -594,19 +592,19 @@ void verifyConstantPool(ClassFile *arq) {
 					case LONG:
 					case SHORT:
 						if (comprimento != 1) {
-							puts("erro  desctitor invalido");
+							puts("Error:  descritor invalido");
 							exit(EXIT_FAILURE);
 						}
 						break;
 					case REF_INST:
 						if (comprimento < 3 || bytes[comprimento - 1] != ';') {
-							puts("erro  desctitor invalido");
+							puts("Error:  descritor invalido");
 							exit(EXIT_FAILURE);
 						}
 						break;
 					case REF_ARRAY:
 						if (comprimento < 2) {
-							puts("erro  desctitor invalido");
+							puts("Error:  descritor invalido");
 							exit(EXIT_FAILURE);
 						}
 						uint16_t index = 0;
@@ -615,22 +613,22 @@ void verifyConstantPool(ClassFile *arq) {
 							bytes++;
 						}
 						if (!DescritorCampo(index, cp_auxiliar)) {
-							puts("erro  desctitor invalido");
+							puts("Error:  descritor invalido");
 							exit(EXIT_FAILURE);
 						}
 						break;
 					case '(':
 						if (comprimento < 3) {
-							puts("erro  desctitor invalido");
+							puts("Error:  descritor invalido");
 							exit(EXIT_FAILURE);
 						}
 						if (!DescritorMetodo(cp_auxiliar, 1)) {
-							puts("erro  desctitor invalido");
+							puts("Error:  descritor invalido");
 							exit(EXIT_FAILURE);
 						}
 						break;
 					default:
-						puts("erro  desctitor invalido");
+						puts("Error:  descritor invalido");
 						exit(EXIT_FAILURE);
 						break;
 				}
@@ -638,4 +636,4 @@ void verifyConstantPool(ClassFile *arq) {
 				break;
 		}
 	}
-}  // fim da função verifyConstantPool
+}  // fim da função VerificaConstantPool

@@ -7,12 +7,12 @@
 // passing it a single argument, which is an array of strings
 void startJVM(char * className, int argumentsNumber, char ** args)
 {
-	// Aloca a estrutura 
+	// Aloca a estrutura
 	JVM	* jvm;
-	jvm = (JVM *) malloc(sizeof(JVM)); 
+	jvm = (JVM *) malloc(sizeof(JVM));
 	jvm->class_data_jvm = NULL;
 	jvm->thread_jvm = NULL;
-	jvm->heap_jvm = (HEAP *) malloc(sizeof(HEAP)); 
+	jvm->heap_jvm = (HEAP *) malloc(sizeof(HEAP));
 	(jvm->heap_jvm)->objects = NULL;
 	(jvm->heap_jvm)->arrays = NULL;
 
@@ -29,8 +29,8 @@ void startJVM(char * className, int argumentsNumber, char ** args)
 		}else if(strcmp(args[0], "a") == 0)
 		{
 			jvmOut = fopen("jvmOut.txt", "w");
-		}		
-		
+		}
+
 		FILE * binFile;
 		if(strstr(className, ".class\0"))
 		{
@@ -46,7 +46,7 @@ void startJVM(char * className, int argumentsNumber, char ** args)
 		unloadClassFile(cf);
 		fclose(binFile);
 		exitJVM(jvm);
-		exit(0);		
+		exit(0);
 	}
 
 // Se o argumentsNumber for 0
@@ -81,20 +81,20 @@ void startJVM(char * className, int argumentsNumber, char ** args)
 	OBJECT * string = NULL;
 	// array de tipo instanceReference para armazenar as strings de linha de comando
 	ARRAY * string_array = NULL;
-	
+
 	// caso argumentsNumber seja maior ou igual a 2
 	if(argumentsNumber)
 	{
 	 	// coloca o array na heap
-	 	string_array = (ARRAY *) malloc(sizeof(ARRAY));	
+	 	string_array = (ARRAY *) malloc(sizeof(ARRAY));
 	 	string_array->next = (jvm->heap_jvm)->arrays;
 		(jvm->heap_jvm)->arrays = string_array;
 		string_array->count = (int32_t) argumentsNumber;
-		
+
 		if(string_array->count){
 			string_array->entry = (DATA_TYPES *) malloc(string_array->count * sizeof(DATA_TYPES));
 		}
-		
+
 		for(uint16_t i = 0; i < string_array->count; i++)
 		{
 			// coloca os objetos na heap
@@ -107,13 +107,13 @@ void startJVM(char * className, int argumentsNumber, char ** args)
 			(string->instance_variables)->value.u.InstanceReference.reference = (OBJECT *) args[i];
 			(string_array->entry[i]).u.InstanceReference.reference = string;
 		}
-	}	
-	
+	}
+
 	// executa o metodo main com os parametros string de linha de comando
 	// public static void main(String [] args)
-	executeMethod("main", "([Ljava/lang/String;)V", dados_classe_principal, 
+	executeMethod("main", "([Ljava/lang/String;)V", dados_classe_principal,
 				  jvm, main_thread, NULL, 1, (uint32_t *) &string_array);
-	
+
 	exitJVM(jvm);
 }
 /////////////////
@@ -123,12 +123,12 @@ void loadClass(char * className, CLASS_DATA ** cd, CLASS_DATA *classLoader, JVM 
 
 	FILE * classBinaryFile;
 	ClassFile * cf;
-	
+
 	//Caso o nome do arquivo esteja em .class
 	//Abrir o arquivo binário da classe
 	if(!strstr(className, ".class\0"))
 	{
-		char * classNameWithDotClass = (char *) malloc((strlen(className) + 7) * sizeof(char));	
+		char * classNameWithDotClass = (char *) malloc((strlen(className) + 7) * sizeof(char));
 		strcpy(classNameWithDotClass, className);
 		strcat(classNameWithDotClass, ".class");
 		classBinaryFile = fopen(classNameWithDotClass, "rb");
@@ -138,8 +138,8 @@ void loadClass(char * className, CLASS_DATA ** cd, CLASS_DATA *classLoader, JVM 
 	{
 		classBinaryFile = fopen(className, "rb");
 	}
-	
-	// printf("%p - %s\n", classBinaryFile, className); 
+
+	// printf("%p - %s\n", classBinaryFile, className);
 	if(!classBinaryFile)
 	{
 		puts("\nClassNotFoundException\n");
@@ -152,8 +152,8 @@ void loadClass(char * className, CLASS_DATA ** cd, CLASS_DATA *classLoader, JVM 
 		cf = obtainClassFile(classBinaryFile);
 	}
 
-	// Parse the stream of binary data into internal data structures in the method area 
-	// Create an instance of class java.lang.Class that represents the type 
+	// Parse the stream of binary data into internal data structures in the method area
+	// Create an instance of class java.lang.Class that represents the type
 
 	// carrega dados da classe (CLASS_DATA) com informacoes obtidas do classFile
 	// coloca os dados da classe na pilha de classes da jvm
@@ -185,7 +185,7 @@ void loadClass(char * className, CLASS_DATA ** cd, CLASS_DATA *classLoader, JVM 
 			((*cd)->field_data + i)->field_descriptor = cf->constant_pool + (cf->fields + i)->descriptor_index - 1;
 			((*cd)->field_data + i)->modifiers = (cf->fields + i)->access_flags;
 			((*cd)->field_data + i)->info = (cf->fields + i);
-			if(! DescritorCampo(0, ((*cd)->field_data + i)->field_descriptor)){  
+			if(! DescritorCampo(0, ((*cd)->field_data + i)->field_descriptor)){
 				puts("VerifyError: field descriptor");
 				exitJVM(jvm);
 				exit(EXIT_FAILURE);
@@ -202,19 +202,19 @@ void loadClass(char * className, CLASS_DATA ** cd, CLASS_DATA *classLoader, JVM 
 			((*cd)->method_data + i)->modifiers = (cf->methods + i)->access_flags;
 			((*cd)->method_data + i)->info = (cf->methods + i);
 			((*cd)->method_data + i)->CLASS_DATA = (*cd);
-	
+
 			if(*(((*cd)->method_data + i)->method_descriptor)->u.Utf8.bytes != '('){
 				puts("VerifyError: method descriptor");
 				exitJVM(jvm);
 				exit(EXIT_FAILURE);
 			}
-	
-			if(! DescritorMetodo(((*cd)->method_data + i)->method_descriptor, 1)){    
+
+			if(! DescritorMetodo(((*cd)->method_data + i)->method_descriptor, 1)){
 				puts("VerifyError: method descriptor");
 				exitJVM(jvm);
 				exit(EXIT_FAILURE);
 			}
-	
+
 			if(!(((*cd)->method_data + i)->modifiers & ACC_ABSTRACT) && !(((*cd)->method_data + i)->modifiers & ACC_NATIVE)){
 				attribute_info	* code_attr = getCodeAttribute((*cd)->method_data + i, *cd);
 				if(!code_attr){
@@ -242,7 +242,7 @@ void linkClass(CLASS_DATA * cd, JVM * jvm){
 
 void verifyLink(CLASS_DATA * cd, JVM * jvm){
 
-	ArquivoClassverificador(cd->classfile);       
+	VerificadorArquivoClass(cd->classfile);
 	SuperVerificador(cd->classfile, jvm);
 	VerificadorOverride(cd->classfile, jvm);
 }
@@ -334,7 +334,7 @@ void initializeClass(CLASS_DATA * cd, JVM * jvm, THREAD * thread){
 		char	* super_classe_name = (char *) cp_aux->u.Utf8.bytes;
 		super_classe_name[cp_aux->u.Utf8.length] = '\0';
 		CLASS_DATA	* cd_super;
-		
+
 		if(!(cd_super = getClass(cp_aux, jvm))){
 			loadClass(super_classe_name, &cd_super, cd, jvm);
 		}
@@ -373,7 +373,7 @@ void executeMethod(char * method_name, char * method_descriptor, CLASS_DATA * cd
 				puts("LocalsOutofBoundsError");
 				exitJVM(jvm);
 				exit(EXIT_FAILURE);
-				
+
 			}
 			for(uint16_t pos_arg = 0; pos_arg < nargs; pos_arg++, index++){
 				frame->local_variables[index] = args[pos_arg];
@@ -522,8 +522,8 @@ VARIABLE * getInstanceVariable(constant_pool_info * cp_field_name, OBJECT * obje
 			iv = iv->next;
 		}
 	}
-	
-	
+
+
 	return	NULL;
 }
 
@@ -532,16 +532,16 @@ VARIABLE * getInstanceVariable(constant_pool_info * cp_field_name, OBJECT * obje
 METHOD_DATA	* getMethod(char * method_name, char * method_descriptor, CLASS_DATA * cd, JVM * jvm){
 	char * name;
 	char * descriptor;
-	
+
 	CLASS_DATA * super_class = cd;
 	while(super_class){
 		for(uint16_t	i = 0; i < (super_class->classfile)->methods_count; i++){
 			name = (char *) ((super_class->method_data + i)->method_name)->u.Utf8.bytes;
 			name[((super_class->method_data + i)->method_name)->u.Utf8.length] = '\0';
-	
+
 			descriptor = (char *) ((super_class->method_data + i)->method_descriptor)->u.Utf8.bytes;
 			descriptor[((super_class->method_data + i)->method_descriptor)->u.Utf8.length] = '\0';
-	
+
 			if(!strcmp(method_name, name) && !strcmp(method_descriptor, descriptor)){
 				return	(super_class->method_data + i);
 			}
@@ -634,10 +634,10 @@ void unloadClassData(CLASS_DATA * CLASS_DATA){
 		if((CLASS_DATA->classfile)->methods_count){
 			free(CLASS_DATA->method_data);
 		}
-	
+
 		unloadClassFile(CLASS_DATA->classfile);
 	}
-	
+
 	if(CLASS_DATA->class_variables){
 		unloadVariables(CLASS_DATA->class_variables);
 	}
@@ -696,7 +696,7 @@ void pushOperand(uint32_t word, FRAME * frame){
 
 	aux->value = word;
 	aux->next = frame->operand_stack;
-	frame->operand_stack = aux;	
+	frame->operand_stack = aux;
 }
 /////////////////
 
@@ -706,7 +706,7 @@ uint32_t popOperand(FRAME * frame){
 		OPERAND_STACK * aux = frame->operand_stack;
 		frame->operand_stack = aux->next;
 		word = aux->value;
-		
+
 		free(aux);
 
 	}
