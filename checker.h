@@ -6,6 +6,6 @@ bool DescritorMetodo(constant_pool_info *, uint16_t);
 void VerificaConstantPool(ClassFile *);
 void AcessoFlags(ClassFile *);
 void VerificaBytecode(attribute_info *, ClassFile *);
-void ArquivoClassverificador(ClassFile *);
+void VerificadorArquivoClass(ClassFile *);
 void SuperVerificador(ClassFile *, JVM *);
 void VerificadorOverride(ClassFile *, JVM *);

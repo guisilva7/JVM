@@ -129,7 +129,7 @@ bool DescritorMetodo(constant_pool_info *cp, uint16_t index) {
 			return false;
 	}
 }
-// fim da função DescritorCampo
+// fim da função DescritorMetodo
 
 
 /*==========================================*/
@@ -166,8 +166,8 @@ void AcessoFlags(ClassFile *arq) {
 
 
 /*==========================================*/
-// função ArquivoClassverificador
-void ArquivoClassverificador(ClassFile *arq) {
+// função VerificadorArquivoClass
+void VerificadorArquivoClass(ClassFile *arq) {
 	// checa inconsistências na Constant Pool
 	VerificaConstantPool(arq);
 
@@ -457,7 +457,7 @@ void ArquivoClassverificador(ClassFile *arq) {
 				break;
 		}
 	}
-}  // fim da funcao ArquivoClassverificador
+}  // fim da funcao VerificadorArquivoClass
 
 /*==========================================*/
 // função verifyOverrideMethodFinal
