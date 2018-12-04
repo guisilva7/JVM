@@ -16,7 +16,7 @@ uint8_t u1Read(FILE * file)
     int8_t  to_return = getc(file);
     // if(to_return == EOF)
     // {
-    //     puts("[ERRO] erro ao ler um bytes");
+    //     puts("[EROOOOU] erro ao ler um bytes");
     //     exit(EXIT_FAILURE);
     // }
     return  to_return;
@@ -28,7 +28,7 @@ uint16_t u2Read(FILE * file)
     int16_t to_return = getc(file);
     // if(to_return == EOF)
     // {
-    //     puts("[ERRO] erro ao ler dois bytes");
+    //     puts("[EROOOOU] erro ao ler dois bytes");
     //     exit(EXIT_FAILURE);
     // }
     
@@ -44,7 +44,7 @@ uint32_t u4Read(FILE * file)
     uint32_t    to_return = getc(file);
     if(to_return == EOF)
     {
-        puts("[ERRO] erro ao quatro bytes");
+        puts("[EROOOOU] erro ao quatro bytes");
         exit(EXIT_FAILURE);
     }
 
@@ -141,7 +141,7 @@ ClassFile * obtainClassFile(FILE * file)
     
     // se nao foi possivel alocar
     if (cf == NULL) {
-        printf("\n[ERRO] erro ao alocar memoria para ClassFile\n");
+        printf("\n[EROOOOU] erro ao alocar memoria para ClassFile\n");
         exit(1);
     }
     
@@ -149,7 +149,7 @@ ClassFile * obtainClassFile(FILE * file)
     cf->magic = u4Read(file); 
     // caso nao seja CAFEBABE, emite mensagem de erro e sai do programa
     if(cf->magic != 0xCAFEBABE){
-        puts("\n[ERRO] (cf->magic) numero magico nao eh CAFEBABE\n");
+        puts("\n[EROOOOU] (cf->magic) numero magico nao eh CAFEBABE\n");
         free(cf);
         exit(EXIT_FAILURE);
     }
@@ -162,7 +162,7 @@ ClassFile * obtainClassFile(FILE * file)
     //46 = versao 1.2 
     if((cf->major_version > 46) || (cf->major_version < 45) 
         || (cf->major_version == 46 && cf->minor_version != 0)){
-        puts("\n[ERRO] (cf->minor ou cf->major) so suportadas versoes 1.1 e 1.2\n");
+        puts("\n[EROOOOU] (cf->minor ou cf->major) so suportadas versoes 1.1 e 1.2\n");
         // exit(EXIT_FAILURE);
     }
     
@@ -192,7 +192,7 @@ ClassFile * obtainClassFile(FILE * file)
     
     // verifica final do arquivo ClassFile
     if(getc(file) != EOF){
-        puts("\n[ERRO] mais campos que um ClassFile correto\n");
+        puts("\n[EROOOOU] mais campos que um ClassFile correto\n");
     }
     return  cf;
 }
@@ -205,7 +205,7 @@ void  obtainConstantPool(ClassFile * cf, FILE * file)
 
     if(cf->constant_pool_count == 0)
     {
-        puts("\n[ERRO] constant_pool_count igual a zero\n");
+        puts("\n[EROOOOU] constant_pool_count igual a zero\n");
         exit(EXIT_FAILURE);
     }
     // alocando memoria para a constant_pool
@@ -280,7 +280,7 @@ void  obtainConstantPool(ClassFile * cf, FILE * file)
                 break;
             // nenhum dos casos anteriores eh um erro
             default:
-                puts("\n[ERRO] atributo de constant_pool nao valido\n");
+                puts("\n[EROOOOU] atributo de constant_pool nao valido\n");
                 exit(EXIT_FAILURE);
         }   
     }
@@ -447,7 +447,7 @@ void obtainAttributes(field_info * fd_in, method_info * mt_in, attribute_info * 
     }
     // se nenhum dos casos anteriores
     else{
-        puts("[ERRO] nao foi possivel obter os attributes");
+        puts("[EROOOOU] nao foi possivel obter os attributes");
         exit(EXIT_FAILURE);
     }
     
@@ -664,7 +664,7 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
     
     if(cf->constant_pool[cf->this_class-1].tag != CONSTANT_Class)
     {
-        puts("\n[ERRO] this_class nao aponta para uma CONSTANT_Class_info\n");
+        puts("\n[EROOOOU] this_class nao aponta para uma CONSTANT_Class_info\n");
         exit(EXIT_FAILURE);
     }else{
         uint16_t name_index;
@@ -674,7 +674,7 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
         constPool = cf->constant_pool + name_index - 1;
         if(constPool->tag != CONSTANT_Utf8)
         {
-            puts("\n[ERRO] this_class nao referencia um name_index valido\n");
+            puts("\n[EROOOOU] this_class nao referencia um name_index valido\n");
             exit(EXIT_FAILURE);
         }
         else{
@@ -693,7 +693,7 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
     else{
         if(cf->constant_pool[cf->super_class-1].tag != CONSTANT_Class)
         {
-            puts("\n[ERRO] super_class nao aponta para uma CONSTANT_Class_info\n");
+            puts("\n[EROOOOU] super_class nao aponta para uma CONSTANT_Class_info\n");
             exit(EXIT_FAILURE);
         }else
         {
@@ -703,7 +703,7 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
             constPool = cf->constant_pool + name_index - 1;
             if(constPool->tag != CONSTANT_Utf8)
             {
-                puts("\n[ERRO] super_class nao referencia um name_index valido\n");
+                puts("\n[EROOOOU] super_class nao referencia um name_index valido\n");
                 exit(EXIT_FAILURE);
             }else
             {
@@ -907,7 +907,7 @@ void showInterfaces(ClassFile * cf, FILE * saida)
         // se nao for CONSTANT_Class
         if(cf->constant_pool[cf->interfaces[i]-1].tag != CONSTANT_Class)
         {
-            puts("\n[ERRO] interface nao referencia uma CONSTANTE_Class_info\n");
+            puts("\n[EROOOOU] interface nao referencia uma CONSTANTE_Class_info\n");
             exit(EXIT_FAILURE);
         }else
         {
@@ -919,7 +919,7 @@ void showInterfaces(ClassFile * cf, FILE * saida)
             // se nao for CONSTANT_Utf8
             if(constPool->tag != CONSTANT_Utf8)
             {
-                puts("\n[ERRO] interface nao referencia um class_name_index valido\n");
+                puts("\n[EROOOOU] interface nao referencia um class_name_index valido\n");
                 exit(EXIT_FAILURE);
             }else
             {
@@ -947,7 +947,7 @@ void showFields(ClassFile * cf, FILE * saida)
         // se nao for CONSTANT_Utf8
         if(constPool->tag != CONSTANT_Utf8)
         {
-            puts("\n[ERRO] field nao referencia um name_index valido.\n");
+            puts("\n[EROOOOU] field nao referencia um name_index valido.\n");
             exit(EXIT_FAILURE);
         }
         //printa numero do field
@@ -1045,7 +1045,7 @@ void showMethods(ClassFile * cf, FILE * saida)
         // se nao for CONSTANT_Utf8
         if(constPool->tag != CONSTANT_Utf8)
         {
-            puts("\n[ERRO] method nao possui um name_index valido.\n");
+            puts("\n[EROOOOU] method nao possui um name_index valido.\n");
             exit(EXIT_FAILURE);
         }
         fprintf(saida, "[%" PRIu16 "]\t", i);
@@ -1063,7 +1063,7 @@ void showMethods(ClassFile * cf, FILE * saida)
         // se nao for CONSTANT_Utf8
         if(constPool->tag != CONSTANT_Utf8)
         {
-            puts("\n[ERRO] method nao possui um descriptor_index valido.\n");
+            puts("\n[EROOOOU] method nao possui um descriptor_index valido.\n");
             exit(EXIT_FAILURE);
         }else // printa CONSTANT_Utf8
         {
@@ -1194,7 +1194,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
         // se nao for CONSTANT_Utf8
         if(constPool->tag != CONSTANT_Utf8)
         {
-            puts("\n[ERRO] atributo nao referencia um name_index valido.\n");
+            puts("\n[EROOOOU] atributo nao referencia um name_index valido.\n");
             exit(EXIT_FAILURE);
         }  
 
@@ -1580,7 +1580,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                                     fprintf(saida," (long\n");
                                     break;
                                 default:
-                                    printf("[ERRO] newarray aplicado tipo invalido.\n");
+                                    printf("[EROOOOU] newarray aplicado tipo invalido.\n");
                                     exit(EXIT_FAILURE);
                                     break;
                             }
@@ -1608,7 +1608,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                                 fprintf(saida,">\n");
                                 break;
                             default:
-                                puts("[ERRO] instrucao ldc com argumento invalido\n");
+                                puts("[EROOOOU] instrucao ldc com argumento invalido\n");
                                 exit(EXIT_FAILURE);
                         }
                         offset +=2;
@@ -1625,7 +1625,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         fprintf(saida, "\t#%" PRIu16, index);
                         cp_a0 = cf->constant_pool + index - 1;
                         if(cp_a0->tag != CONSTANT_Class){
-                            printf("\n[ERRO] %s nao referencia um CONSTANT_Class valido.\n",
+                            printf("\n[EROOOOU] %s nao referencia um CONSTANT_Class valido.\n",
                                    op_codesJVM[*nextCode]);
                             exit(EXIT_FAILURE);
                         }
@@ -1787,7 +1787,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                                 }
                                 break;
                             default:
-                                puts("[ERRO] instrucao ldc2_w com argumento invalido\n");
+                                puts("[EROOOOU] instrucao ldc2_w com argumento invalido\n");
                                 exit(EXIT_FAILURE);
                         }
                         offset +=3;
@@ -1815,7 +1815,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         fprintf(saida, "\t#%" PRIu16, index);
                         cp_a0 = cf->constant_pool + index - 1;
                         if(cp_a0->tag != CONSTANT_Class){
-                            printf("\n[ERRO] %s nao referencia um CONSTANT_Class valido.\n",
+                            printf("\n[EROOOOU] %s nao referencia um CONSTANT_Class valido.\n",
                                    op_codesJVM[*nextCode]);
                             exit(EXIT_FAILURE);
                         }
@@ -1850,7 +1850,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         fprintf(saida, "\t#%" PRIu16, index);
                         cp_a0 = cf->constant_pool + index - 1;
                         if(cp_a0->tag != CONSTANT_InterfaceMethodref && cp_a0->tag != CONSTANT_Methodref){
-                            printf("\n[ERRO] %s nao referencia um CONSTANT_ref valido.\n",
+                            printf("\n[EROOOOU] %s nao referencia um CONSTANT_ref valido.\n",
                                    op_codesJVM[*nextCode]);
                             exit(EXIT_FAILURE);
                         }
@@ -1860,7 +1860,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                             
                             cp_a0 = cf->constant_pool + name_index - 1;
                             if(cp_a0->tag != CONSTANT_Class){
-                                printf("\n[ERRO] %s nao referencia um CONSTANT_ref valido.\n",
+                                printf("\n[EROOOOU] %s nao referencia um CONSTANT_ref valido.\n",
                                        op_codesJVM[*nextCode]);
                                 exit(EXIT_FAILURE);
                             }
@@ -1873,7 +1873,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                                 
                                 cp_a0 = cf->constant_pool + name_and_type_index - 1;
                                 if(cp_a0->tag != CONSTANT_NameAndType){
-                                    printf("\n[ERRO] %s nao referencia um CONSTANT_ref valido.\n",op_codesJVM[*nextCode]);
+                                    printf("\n[EROOOOU] %s nao referencia um CONSTANT_ref valido.\n",op_codesJVM[*nextCode]);
                                     exit(EXIT_FAILURE);
                                 }
                                 else{
@@ -1983,7 +1983,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                                 offset +=6;
                                 break;
                             default:
-                                printf("[ERRO] wide aplicado a uma instrucao invalida\n");
+                                printf("[EROOOOU] wide aplicado a uma instrucao invalida\n");
                                 exit(EXIT_FAILURE);
                         }
                         fprintf(saida, "\n");
@@ -2124,7 +2124,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                 uint16_t    sourcefile_index = attributes_aux->u.SourceFile.sourcefile_index;
                 cp_a0 = cf->constant_pool + sourcefile_index - 1;
                 if(cp_a0->tag != CONSTANT_Utf8){
-                    puts("\n[ERRO] SourceFile Attribute nao referencia um nome valido.\n");
+                    puts("\n[EROOOOU] SourceFile Attribute nao referencia um nome valido.\n");
                     exit(EXIT_FAILURE);
                 }
                 else{
@@ -2157,7 +2157,7 @@ void printConstantClass(ClassFile * cf, constant_pool_info * constPool, FILE * s
     // se nao eh CONTANT_Utf8
     if(cp_a0->tag != CONSTANT_Utf8)
     {
-        puts("\n[ERRO] valor do name_index de CONSTANT_Class_info nao eh indice de cp_info cuja tag eh CONSTANT_Utf8\n");
+        puts("\n[EROOOOU] valor do name_index de CONSTANT_Class_info nao eh indice de cp_info cuja tag eh CONSTANT_Utf8\n");
         exit(EXIT_FAILURE);
     }
     else
@@ -2180,7 +2180,7 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
             // se nao eh CONSTANT_Class
             if(cp_a0->tag != CONSTANT_Class)
             {
-                puts("\n[ERRO] valor da tag invalido (Diferente de CONSTANT_Class)\n");
+                puts("\n[EROOOOU] valor da tag invalido (Diferente de CONSTANT_Class)\n");
                 exit(EXIT_FAILURE);
             }
             else
@@ -2188,7 +2188,7 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
                 cp_a0 = cf->constant_pool + cp_a0->u.Class.name_index - 1;
                 if(cp_a0->tag != CONSTANT_Utf8)
                 {
-                    puts("\n[ERRO] valor da tag invalido (Diferente de CONSTANT_Utf8)\n");
+                    puts("\n[EROOOOU] valor da tag invalido (Diferente de CONSTANT_Utf8)\n");
                     exit(EXIT_FAILURE);
                 }
                 else
@@ -2205,7 +2205,7 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
             // se nao eh CONSTANT_NameAndType
             if(cp_a0->tag != CONSTANT_NameAndType)
             {
-                puts("\n[ERRO] valor da tag invalido (Diferente de CONSTANT_NameAndType)\n");
+                puts("\n[EROOOOU] valor da tag invalido (Diferente de CONSTANT_NameAndType)\n");
                 exit(EXIT_FAILURE);
             }
             else
@@ -2214,7 +2214,7 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
                 cp_a0 = cf->constant_pool + cp_a0->u.NameAndType.name_index - 1;
                 if(cp_a0->tag != CONSTANT_Utf8)
                 {
-                    puts("\n[ERRO] valor da tag invalido (Diferente de CONSTANT_Utf8)\n");
+                    puts("\n[EROOOOU] valor da tag invalido (Diferente de CONSTANT_Utf8)\n");
                     exit(EXIT_FAILURE);
                 }
                 else
@@ -2225,7 +2225,7 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
                 cp_a2 = cf->constant_pool + cp_a2->u.NameAndType.descriptor_index - 1;
                 if(cp_a2->tag != CONSTANT_Utf8)
                 {
-                    puts("[ERRO] valor da tag invalido (Diferente de CONSTANT_Utf8).\n");
+                    puts("[EROOOOU] valor da tag invalido (Diferente de CONSTANT_Utf8).\n");
                     exit(EXIT_FAILURE);
                 }
                 else
@@ -2246,7 +2246,7 @@ void printConstantString(ClassFile * cf, constant_pool_info * constPool, FILE * 
     // se nao for CONSTANT_Utf8
     if(cp_a0->tag != CONSTANT_Utf8)
     {
-        puts("\n[ERRO] valor da tag invalido (Diferente de CONSTANT_Utf8)\n");
+        puts("\n[EROOOOU] valor da tag invalido (Diferente de CONSTANT_Utf8)\n");
         exit(EXIT_FAILURE);
     }
     else
@@ -2267,7 +2267,7 @@ void printConstantNameAndType(ClassFile * cf, constant_pool_info * constPool, ch
         // se nao eh CONSTANT_Utf8   
         if(cp_a0->tag != CONSTANT_Utf8)
         {
-            puts("\n[ERRO] valor da tag invalido (Diferente de CONSTANT_Utf8)\n");
+            puts("\n[EROOOOU] valor da tag invalido (Diferente de CONSTANT_Utf8)\n");
             exit(EXIT_FAILURE);
         }
         // se eh CONSTANT_Utf8 
@@ -2282,7 +2282,7 @@ void printConstantNameAndType(ClassFile * cf, constant_pool_info * constPool, ch
         cp_a0 = cf->constant_pool + cp_a0->u.NameAndType.descriptor_index- 1;
             if(cp_a0->tag != CONSTANT_Utf8)
             {
-                puts("\n[ERRO] valor da tag invalido (Diferente de CONSTANT_Utf8).\n");
+                puts("\n[EROOOOU] valor da tag invalido (Diferente de CONSTANT_Utf8).\n");
                 exit(EXIT_FAILURE);
             }
             else
