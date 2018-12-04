@@ -1,0 +1,279 @@
+ByteCode viewer
+
+#General Information
+Magic:						0xCAFEBABE
+Minor version:				0
+Major version:				46	[1.2]
+Constant pool count:		21
+Access flags:				0x0421	[abstract super public ]
+This class:					cp_info #3	<Animal>
+Super class:				cp_info #4	<java/lang/Object>
+Interfaces count:			0
+Fields count:				1
+Methods count:				4
+Attributes count:			1
+
+#Constant Pool
+[1] CONSTANT_Methodref_info
+	Class name:				cp_info #4	<java/lang/Object>
+	Name and type:			cp_info #17	<<init>()V>
+[2] CONSTANT_Fieldref_info
+	Class name:				cp_info #3	<Animal>
+	Name and type:			cp_info #18	<patasI>
+[3] CONSTANT_Class_info
+	Class name:				cp_info #19	<Animal>
+[4] CONSTANT_Class_info
+	Class name:				cp_info #20	<java/lang/Object>
+[5] CONSTANT_Utf8_info
+	Length of byte array:	5
+	Length of string:		5
+	String:					patas
+[6] CONSTANT_Utf8_info
+	Length of byte array:	1
+	Length of string:		1
+	String:					I
+[7] CONSTANT_Utf8_info
+	Length of byte array:	6
+	Length of string:		6
+	String:					<init>
+[8] CONSTANT_Utf8_info
+	Length of byte array:	3
+	Length of string:		3
+	String:					()V
+[9] CONSTANT_Utf8_info
+	Length of byte array:	4
+	Length of string:		4
+	String:					Code
+[10] CONSTANT_Utf8_info
+	Length of byte array:	15
+	Length of string:		15
+	String:					LineNumberTable
+[11] CONSTANT_Utf8_info
+	Length of byte array:	9
+	Length of string:		9
+	String:					locomover
+[12] CONSTANT_Utf8_info
+	Length of byte array:	5
+	Length of string:		5
+	String:					comer
+[13] CONSTANT_Utf8_info
+	Length of byte array:	8
+	Length of string:		8
+	String:					setPatas
+[14] CONSTANT_Utf8_info
+	Length of byte array:	4
+	Length of string:		4
+	String:					(I)V
+[15] CONSTANT_Utf8_info
+	Length of byte array:	10
+	Length of string:		10
+	String:					SourceFile
+[16] CONSTANT_Utf8_info
+	Length of byte array:	11
+	Length of string:		11
+	String:					Animal.java
+[17] CONSTANT_NameAndType_info
+	Name:					cp_info #7	<<init>>
+	Descriptor:				cp_info #8	<()V>
+[18] CONSTANT_NameAndType_info
+	Name:					cp_info #5	<patas>
+	Descriptor:				cp_info #6	<I>
+[19] CONSTANT_Utf8_info
+	Length of byte array:	6
+	Length of string:		6
+	String:					Animal
+[20] CONSTANT_Utf8_info
+	Length of byte array:	16
+	Length of string:		16
+	String:					java/lang/Object
+
+#Interfaces
+
+#Fields
+Member count:				1
+
+[0]	patas
+	Name:		cp_info #5	<patas>
+	Descriptor:		cp_info #6	<I>
+	Access Flags:		0x0002		[private ]
+
+	Field's attributes count:	0
+
+	Fields Attributes
+
+
+#Methods
+Member count:				4
+
+[0]	<init>
+Name:						cp_info #7	<<init>>
+Descriptor:					cp_info #8	<()V>
+Access flags:				0x0001		[public]
+
+Methods's attr count:		1
+
+	Methods Attributes
+
+[0]	Code
+	Generic info:
+		Attribute name index:	cp_info #9	Code
+		Attribute lenght:	29
+	Specific info:
+		Bytecode:
+			line	offset
+			1	0	aload_0
+			2	1	invokespecial	#1	<java/lang/Object.<init>>
+			3	4	return
+
+			Exception Table Length:		0
+
+		Miscellaneous:
+				Max Stack:		1
+				Max locals:	1
+				Code length:			5
+
+		Code attributes count:	1
+
+	Attribute's Code Attributes
+
+	[0]	LineNumberTable
+		Generic info:
+			Attribute name index:	cp_info #10	LineNumberTable
+			Attribute lenght:	6
+		Specific info:
+				Line Number Table length:	1
+				Line Number Table:
+				Nr.	start_pc	line_number
+				0	0	15
+
+[1]	locomover
+Name:						cp_info #11	<locomover>
+Descriptor:					cp_info #8	<()V>
+Access flags:				0x0001		[public]
+
+Methods's attr count:		1
+
+	Methods Attributes
+
+[0]	Code
+	Generic info:
+		Attribute name index:	cp_info #9	Code
+		Attribute lenght:	25
+	Specific info:
+		Bytecode:
+			line	offset
+			1	0	return
+
+			Exception Table Length:		0
+
+		Miscellaneous:
+				Max Stack:		0
+				Max locals:	1
+				Code length:			1
+
+		Code attributes count:	1
+
+	Attribute's Code Attributes
+
+	[0]	LineNumberTable
+		Generic info:
+			Attribute name index:	cp_info #10	LineNumberTable
+			Attribute lenght:	6
+		Specific info:
+				Line Number Table length:	1
+				Line Number Table:
+				Nr.	start_pc	line_number
+				0	0	21
+
+[2]	comer
+Name:						cp_info #12	<comer>
+Descriptor:					cp_info #8	<()V>
+Access flags:				0x0001		[public]
+
+Methods's attr count:		1
+
+	Methods Attributes
+
+[0]	Code
+	Generic info:
+		Attribute name index:	cp_info #9	Code
+		Attribute lenght:	25
+	Specific info:
+		Bytecode:
+			line	offset
+			1	0	return
+
+			Exception Table Length:		0
+
+		Miscellaneous:
+				Max Stack:		0
+				Max locals:	1
+				Code length:			1
+
+		Code attributes count:	1
+
+	Attribute's Code Attributes
+
+	[0]	LineNumberTable
+		Generic info:
+			Attribute name index:	cp_info #10	LineNumberTable
+			Attribute lenght:	6
+		Specific info:
+				Line Number Table length:	1
+				Line Number Table:
+				Nr.	start_pc	line_number
+				0	0	25
+
+[3]	setPatas
+Name:						cp_info #13	<setPatas>
+Descriptor:					cp_info #14	<(I)V>
+Access flags:				0x0001		[public]
+
+Methods's attr count:		1
+
+	Methods Attributes
+
+[0]	Code
+	Generic info:
+		Attribute name index:	cp_info #9	Code
+		Attribute lenght:	34
+	Specific info:
+		Bytecode:
+			line	offset
+			1	0	aload_0
+			2	1	iload_1
+			3	2	putfield	#2	<Animal.patas>
+			4	5	return
+
+			Exception Table Length:		0
+
+		Miscellaneous:
+				Max Stack:		2
+				Max locals:	2
+				Code length:			6
+
+		Code attributes count:	1
+
+	Attribute's Code Attributes
+
+	[0]	LineNumberTable
+		Generic info:
+			Attribute name index:	cp_info #10	LineNumberTable
+			Attribute lenght:	10
+		Specific info:
+				Line Number Table length:	2
+				Line Number Table:
+				Nr.	start_pc	line_number
+				0	0	30
+				1	5	31
+
+#Attributes
+
+Class Attributes Count:			1
+
+[0]	SourceFile
+Generic info:
+	Attribute name index:	cp_info #15	SourceFile
+	Attribute lenght:	2
+Specific info:
+		Source file index:	cp_info #16	Animal.java
