@@ -9,15 +9,21 @@ int main(int argc, char **argv)
 	char **offset = argv+2;
 
 	// numero de argumentos incorreto
-	if(argc == 1)
+	if(argc == 1){
 		printf("Pra executar, digite:\n\tWINDOWS: jvm.exe class_file.class t|a"
 				 "\nou\tLINUX: ./jvm class_file.class t|a\n");
+	}
+	if(argc == 2 && (strcmp(argv[1],"easteregg") == 0 ? 1 : 0) ){
+		Easter();
+	}
 	// para executar a jvm
-	else if(argc == 2)
+	else if(argc == 2){
 		startJVM(className, argumentsNumber, NULL);
+	}
 	// para executar o leitor exibidor
-	else
+	else{
 		startJVM(className, argumentsNumber, offset);
+	}
 
 	return 0;
 }
