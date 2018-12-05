@@ -2750,26 +2750,48 @@ void	accessField(METHOD_DATA * method, THREAD * thread, JVM * jvm){
 	thread->program_counter += 3;
 }
 
-void Easter(){
-	printf("\n");
-	printf("__________________SSSSSSS     \n");
-	printf("________________SSSSSSSSSS    \n");
-	printf("________________SSS           \n");
-	printf("_____SSSSSSS___SSSS           \n");
-	printf("___SSSSSSSSS___SSSSSSSSS      \n");
-	printf("___SSS__________SSSSSSSSSSS   \n");
-	printf("_SSSS_____________SSSSSSSSSS  \n");
-	printf("_SSSSSSSSS_______________SSSS \n");
-	printf("__SSSSSSSSSSS_____________SSS \n");
-	printf("____SSSSSSSSSS__SSS_____SSSS  \n");
-	printf("___________SSSS__SSSSSSSSS    \n");
-	printf("____________SSS_____SSSS      \n");
-	printf("__SSS_____SSSS                \n");
-	printf("___SSSSSSSSS                  \n");
-	printf("______SSSS                    \n" );
-	
-	printf( "\nSS da aprovacao\n" );
-	printf( "\nbest grupo master 2018/2\n" );
+void Easter(char* tipo){
+	if( (strcmp(tipo, "ss") == 0 ? 1 : 0) || (strcmp(tipo, "Ss") == 0 ? 1 : 0) || (strcmp(tipo, "SS") == 0 ? 1 : 0) ){
+		printf("\n");
+		printf("__________________SSSSSSS     \n");
+		printf("________________SSSSSSSSSS    \n");
+		printf("________________SSS           \n");
+		printf("_____SSSSSSS___SSSS           \n");
+		printf("___SSSSSSSSS___SSSSSSSSS      \n");
+		printf("___SSS__________SSSSSSSSSSS   \n");
+		printf("_SSSS_____________SSSSSSSSSS  \n");
+		printf("_SSSSSSSSS_______________SSSS \n");
+		printf("__SSSSSSSSSSS_____________SSS \n");
+		printf("____SSSSSSSSSS__SSS_____SSSS  \n");
+		printf("___________SSSS__SSSSSSSSS    \n");
+		printf("____________SSS_____SSSS      \n");
+		printf("__SSS_____SSSS                \n");
+		printf("___SSSSSSSSS                  \n");
+		printf("______SSSS                    \n" );
+		
+		printf( "\nSS da aprovacao\n" );
+		printf( "\nbest grupo master 2018/2\n\n" );
+	}
+
+	else if( (strcmp(tipo, "Cruzeiro") == 0 ? 1 : 0) || (strcmp(tipo, "cruzeiro") == 0 ? 1 : 0) ){
+			printf("\n");
+			printf("    SSSSSSSS  SSSSSSSS    SS      SS  SSSSSSSSS  SSSSSSSS   SSS   SSSSSSSS      SSSSSSS      \n");
+			printf("  SSS         SS    SSS   SS      SS       .SSS  SSS        SSS   SS    SSS   SSS     SSS    \n");
+			printf(" SSS          SS    SSS   SS      SS      SSS    SSS        SSS   SS    SSS  SSS       SSS   \n");
+			printf(" SSS          SSSSSS      SS      SS     SSS     SSSSSSS    SSS   SSSSSSS    SSS       SSS   \n");
+			printf(" SSS          SS   SSS    SS      SS    SSS      SSS        SSS   SS   SSS   SSS       SSS   \n");
+			printf("  SSS         SS    SSS   SSS    SSS   SSS       SSS        SSS   SS    SSS   SSS     SSS    \n");
+			printf("    SSSSSSSS  SS     SSS   SSSSSSSS   SSSSSSSSS  SSSSSSSS   SSS   SS     SSS    SSSSSSS      \n");
+			printf("\n");
+			printf("\n");
+			printf("    SSSSS  SSSS  SSSSS   SSSS  SSSSSS  SSSSSS SSSSS      SSSS SS    SS   SS SSSSSS  SSSSS    \n");
+			printf("    SS    SS     SS  SS SS  SS SS   SS   SS   SS       SS     SS    SS   SS SS   SS SS       \n");
+			printf("    SSSS   SSSS  SSSS   SS  SS SSSSS     SS   SSSS     SS     SS    SS   SS SSSSSS  SSSS     \n");
+			printf("    SS        SS SS     SS  SS SS  SSS   SS   SS       SS     SS    SS   SS SS   SS SS       \n");
+			printf("    SSSSS  SSSS  SS      SSSS  SS   SSS  SS   SSSSS      SSSS SSSSS  SSSSS  SSSSSS  SSSSS    \n");
+
+			printf("\nCruzeiro de SSs pra dar sorte\n\n");
+	}
 }
 
 // invoke	0xB6 a 0xBA
