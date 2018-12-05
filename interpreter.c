@@ -2750,6 +2750,28 @@ void	accessField(METHOD_DATA * method, THREAD * thread, JVM * jvm){
 	thread->program_counter += 3;
 }
 
+void Easter(){
+	printf("\n");
+	printf("__________________SSSSSSS     \n");
+	printf("________________SSSSSSSSSS    \n");
+	printf("________________SSS           \n");
+	printf("_____SSSSSSS___SSSS           \n");
+	printf("___SSSSSSSSS___SSSSSSSSS      \n");
+	printf("___SSS__________SSSSSSSSSSS   \n");
+	printf("_SSSS_____________SSSSSSSSSS  \n");
+	printf("_SSSSSSSSS_______________SSSS \n");
+	printf("__SSSSSSSSSSS_____________SSS \n");
+	printf("____SSSSSSSSSS__SSS_____SSSS  \n");
+	printf("___________SSSS__SSSSSSSSS    \n");
+	printf("____________SSS_____SSSS      \n");
+	printf("__SSS_____SSSS                \n");
+	printf("___SSSSSSSSS                  \n");
+	printf("______SSSS                    \n" );
+	
+	printf( "\nSS da aprovacao\n" );
+	printf( "\nbest grupo master 2018/2\n" );
+}
+
 // invoke	0xB6 a 0xBA
 //	invocação de métodos
 void	invoke(METHOD_DATA * method, THREAD * thread, JVM * jvm){
