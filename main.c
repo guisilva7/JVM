@@ -10,8 +10,8 @@ int main(int argc, char **argv)
 
 	// numero de argumentos incorreto
 	if(argc == 1)
-		printf("Execução:\tWINDOWS: jvm.exe class_file.class t|a"
-				 "\n\tLINUX: ./jvm class_file.class t|a\n");
+		printf("Pra executar, carregue seu chakra e digite:\n\tWINDOWS: jvm.exe class_file.class t|a"
+				 "\nou\tLINUX: ./jvm class_file.class t|a\n");
 	// para executar a jvm
 	else if(argc == 2)
 		startJVM(className, argumentsNumber, NULL);
