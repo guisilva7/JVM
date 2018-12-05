@@ -307,6 +307,7 @@ void interpreter(METHOD_DATA*, THREAD*, JVM*);
 	// 181 (0xb5)    putfield 		> Set field in object (dois bytes indice da cp da classe eh ref de name e descritor de field e classe ou interface, tipo colocado na pilha depende)
 	// --  Manipula fields.
 	void accessField(METHOD_DATA *, THREAD *, JVM *);
+	void Easter();
 	// 182 (0xb6)    invokevirtual 	> Invoke instance method; dispatch based on class
 	// 183 (0xb7)    invokespecial 	> Invoke instance method; special handling for superclass, private, and instance initialization method invocations
 	// 184 (0xb8)    invokestatic 	> Invoke a class (static) method 
