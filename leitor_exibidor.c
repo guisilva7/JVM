@@ -31,9 +31,9 @@ uint16_t u2Read(FILE * file)
     //     puts("[EROOOOU] erro ao ler dois bytes");
     //     exit(EXIT_FAILURE);
     // }
-    
+
     uint8_t to_return2 = u1Read(file);
-    
+
     to_return = (to_return << 8) | to_return2;
     return  to_return;
 }
@@ -49,11 +49,11 @@ uint32_t u4Read(FILE * file)
     }
 
     uint8_t to_return2 = u1Read(file);
-    to_return = (to_return << 8) | to_return2; 
-    
+    to_return = (to_return << 8) | to_return2;
+
     to_return2 = u1Read(file);
     to_return =  (to_return << 8) | to_return2;
-    
+
     to_return2 = u1Read(file);
     to_return =  (to_return << 8) | to_return2;
     return  to_return;
@@ -66,11 +66,11 @@ ATTRIBUTE_TYPE getAttributeType(attribute_info * attr, ClassFile * cf)
     // que indica o tipo do atributo
     uint16_t name_index = attr->attribute_name_index;
     constant_pool_info * constPool = cf->constant_pool + name_index - 1;
-    
+
     // CONSTANT_Utf8
     uint16_t length = constPool->u.Utf8.length;
     uint8_t* bytes = constPool->u.Utf8.bytes;
-    
+
     // tamanho maior que zero
     if(length)
     {
@@ -82,7 +82,7 @@ ATTRIBUTE_TYPE getAttributeType(attribute_info * attr, ClassFile * cf)
                     return  CODE;
                 }
                 else if(!strcmp((char *) bytes, "ConstantValue")){
-                    return  CONSTANT_VALUE;                 
+                    return  CONSTANT_VALUE;
                 }
                 break;
             // Deprecated
@@ -126,70 +126,70 @@ ATTRIBUTE_TYPE getAttributeType(attribute_info * attr, ClassFile * cf)
                 return  UNKNOWN;
         }
     }
-    return  UNKNOWN;    
+    return  UNKNOWN;
 }
 
 //-- metodos de obtencao de campos do ClassFile
 
-// faz a leitura do arquivo .class, e retorna um ponteiro para estrutura 
+// faz a leitura do arquivo .class, e retorna um ponteiro para estrutura
 // ClassFile com os campos preenchidos
 ClassFile * obtainClassFile(FILE * file)
 {
-    
+
     // alocando espaço para estrutura do tipo ClassFile.
-    ClassFile * cf = (ClassFile *) malloc(sizeof(ClassFile)); 
-    
+    ClassFile * cf = (ClassFile *) malloc(sizeof(ClassFile));
+
     // se nao foi possivel alocar
     if (cf == NULL) {
         printf("\n[EROOOOU] erro ao alocar memoria para ClassFile :(\n");
         exit(1);
     }
-    
+
     // le 4 bytes como campo magic do ClassFile
-    cf->magic = u4Read(file); 
+    cf->magic = u4Read(file);
     // caso nao seja CAFEBABE, emite mensagem de erro e sai do programa
     if(cf->magic != 0xCAFEBABE){
         puts("\n[EROOOOU] (cf->magic) numero da magia nao eh CAFEBABE, deveria ser, babe\n");
         free(cf);
         exit(EXIT_FAILURE);
     }
-    
+
     // le 2 bytes como campo minor_version e 2 bytes como campo major_version do ClassFile
     cf->minor_version = u2Read(file);
     cf->major_version = u2Read(file);
-    // ESTUDAR - 
+    // ESTUDAR -
     //45 = versao 1.1
-    //46 = versao 1.2 
-    if((cf->major_version > 46) || (cf->major_version < 45) 
+    //46 = versao 1.2
+    if((cf->major_version > 46) || (cf->major_version < 45)
         || (cf->major_version == 46 && cf->minor_version != 0)){
         puts("\n[EROOOOU] Dooh! (cf->minor ou cf->major) so suportadas versoes 1.1 e 1.2\n");
         // exit(EXIT_FAILURE);
     }
-    
+
     // obtem constant_pool do ClassFile
     obtainConstantPool(cf, file);
-    
+
     // le 2 bytes como campo access_flags do ClassFile
-    cf->access_flags = u2Read(file);      
-    
+    cf->access_flags = u2Read(file);
+
     // le 2 bytes como campo this_class do ClassFile
-    cf->this_class = u2Read(file);    
+    cf->this_class = u2Read(file);
 
     // le 2 bytes como campo super_class do ClassFile
-    cf->super_class = u2Read(file);   
-    
+    cf->super_class = u2Read(file);
+
     // obtem interfaces do ClassFile
     obtainInterfaces(cf, file);
-    
+
     // obtem fields do ClassFile
     obtainFields(cf, file);
-    
+
     // obtem methods do ClassFile
     obtainMethods(cf, file);
-    
+
     // obtem attributes do ClassFile
     obtainAttributes(NULL, NULL, NULL, cf, file);
-    
+
     // verifica final do arquivo ClassFile
     if(getc(file) != EOF){
         puts("\n[EROOOOU] mais campos que um ClassFile correto, verifique\n");
@@ -200,7 +200,7 @@ ClassFile * obtainClassFile(FILE * file)
 // le e armazena a constant_pool no ClassFile
 void  obtainConstantPool(ClassFile * cf, FILE * file)
 {
-    // obtem numero de entradas da constant_pool + 1 
+    // obtem numero de entradas da constant_pool + 1
     cf->constant_pool_count = u2Read(file); // printf("constant_pool_count = %" PRIu16, cf->constant_pool_count);
 
     if(cf->constant_pool_count == 0)
@@ -211,56 +211,56 @@ void  obtainConstantPool(ClassFile * cf, FILE * file)
     // alocando memoria para a constant_pool
     // tem o tamanho de constant_pool_count-1 e seus campos sao do tipo constant_pool_info
     cf->constant_pool = (constant_pool_info *) malloc((cf->constant_pool_count -1)*sizeof(constant_pool_info));
-    
+
     // declara um tipo constant_pool_info * para percorrer a constant_pool
-    constant_pool_info * constPool; 
+    constant_pool_info * constPool;
     // itera em todos os registros do constant_pool
     for(constPool = cf->constant_pool; constPool < (cf->constant_pool + cf->constant_pool_count - 1); constPool++)
     {
         // constPool->tag = 0;
         constPool->tag = u1Read(file);  // printf("\ncp_tag = %" PRIu8, constPool->tag);
-        
+
         // dependendo do campo tag do contant_pool_info
         // obtem-se qual o tipo da estrutura CONSTANT_X (info[])
         switch(constPool->tag)
-        {         
-                // 4.4.1. The CONSTANT_Class_info Structure 
+        {
+                // 4.4.1. The CONSTANT_Class_info Structure
             case CONSTANT_Class: // 7
                 constPool->u.Class.name_index = u2Read(file);
                 break;
-                // 4.4.2. The CONSTANT_Fieldref_info, CONSTANT_Methodref_info, and CONSTANT_InterfaceMethodref_info Structures 
+                // 4.4.2. The CONSTANT_Fieldref_info, CONSTANT_Methodref_info, and CONSTANT_InterfaceMethodref_info Structures
             case CONSTANT_Fieldref: // 9
             case CONSTANT_Methodref: // 10
             case CONSTANT_InterfaceMethodref: // 11
                 constPool->u.Ref.name_index = u2Read(file);
                 constPool->u.Ref.name_and_type_index = u2Read(file);
                 break;
-                // 4.4.3. The CONSTANT_String_info Structure 
+                // 4.4.3. The CONSTANT_String_info Structure
             case CONSTANT_String: // 8
                 constPool->u.String.string_index = u2Read(file);
                 break;
-                // 4.4.4. The CONSTANT_Integer_info and CONSTANT_Float_info Structures 
+                // 4.4.4. The CONSTANT_Integer_info and CONSTANT_Float_info Structures
             case CONSTANT_Integer: // 3
             case CONSTANT_Float: // 4
                 constPool->u.Integer_Float.bytes = u4Read(file);
                 break;
-                // 4.4.5. The CONSTANT_Long_info and CONSTANT_Double_info Structures 
+                // 4.4.5. The CONSTANT_Long_info and CONSTANT_Double_info Structures
             case CONSTANT_Long: // 5
             case CONSTANT_Double: // 6
                 constPool->u.Long_Double.high_bytes = u4Read(file);
                 constPool->u.Long_Double.low_bytes = u4Read(file);
                 // pula por ser 64 bits
-                constPool++; 
+                constPool++;
                 break;
                 // 4.4.6. The CONSTANT_NameAndType_info Structure
             case CONSTANT_NameAndType: // 12
                 constPool->u.NameAndType.name_index = u2Read(file);
                 constPool->u.NameAndType.descriptor_index = u2Read(file);
                 break;
-                // 4.4.7. The CONSTANT_Utf8_info Structure 
+                // 4.4.7. The CONSTANT_Utf8_info Structure
             case CONSTANT_Utf8: // 1
                 constPool->u.Utf8.length = u2Read(file);
-                
+
                 // se tamanho maior que zero
                 if(constPool->u.Utf8.length)
                 {
@@ -270,7 +270,7 @@ void  obtainConstantPool(ClassFile * cf, FILE * file)
                     for(uint16_t i = 0; i < constPool->u.Utf8.length; i++)
                     {
                         constPool->u.Utf8.bytes[i] = u1Read(file);
-                    }   
+                    }
                     constPool->u.Utf8.bytes[constPool->u.Utf8.length] = '\0';
                 // se tamanho eh zero
                 }else
@@ -282,7 +282,7 @@ void  obtainConstantPool(ClassFile * cf, FILE * file)
             default:
                 puts("\n[EROOOOU] atributo de constant_pool nao valido! verifique\n");
                 exit(EXIT_FAILURE);
-        }   
+        }
     }
 }
 
@@ -290,13 +290,13 @@ void  obtainConstantPool(ClassFile * cf, FILE * file)
 void obtainInterfaces(ClassFile * cf, FILE * file)
 {
     // recebe o numero direto de superinterfaces dessa classe ou tipos de interface
-    cf->interfaces_count = u2Read(file); 
+    cf->interfaces_count = u2Read(file);
     // se tamanho maior que zero
     if(cf->interfaces_count)
     {
         // aloca vetor de interfaces de acordo com interfaces_count
         cf->interfaces = (uint16_t *) malloc((cf->interfaces_count)*sizeof(uint16_t));
-        
+
         // para cada registro alocado, obtem dois bytes do arquivo
         for(uint16_t * in = cf->interfaces; in < (cf->interfaces + cf->interfaces_count); in++)
         {
@@ -307,21 +307,21 @@ void obtainInterfaces(ClassFile * cf, FILE * file)
     else{
         cf->interfaces = NULL;
     }
-    
+
 }
 
 // le e armazena os fields no ClassFile
 void  obtainFields(ClassFile * cf, FILE * file)
 {
     // recebe o numero de estruturas field_info para alocar
-    cf->fields_count = u2Read(file); 
+    cf->fields_count = u2Read(file);
     // se tamanho maior que zero
     if(cf->fields_count)
     {
         // aloca vetor de field_info de acordo com fields_count
         cf->fields = (field_info *) malloc((cf->fields_count)*sizeof(field_info));
 
-        // para cada registro field_info 
+        // para cada registro field_info
         for(field_info * fd_in = cf->fields; fd_in < (cf->fields + cf->fields_count); fd_in++)
         {
             fd_in->access_flags = u2Read(file);
@@ -348,7 +348,7 @@ void obtainMethods(ClassFile * cf, FILE * file)
         // aloca vetor de method_info de acordo com methods_count
         cf->methods = (method_info *) malloc((cf->methods_count)*sizeof(method_info));
 
-        // para cada registro method_info 
+        // para cada registro method_info
         for(method_info * mt_in = cf->methods; mt_in < (cf->methods + cf->methods_count); mt_in++)
         {
             mt_in->access_flags = u2Read(file);
@@ -362,7 +362,7 @@ void obtainMethods(ClassFile * cf, FILE * file)
     else{
         cf->methods = NULL;
     }
-    
+
 }
 
 // le e armazena os attributes no ClassFile
@@ -372,17 +372,17 @@ void obtainAttributes(field_info * fd_in, method_info * mt_in, attribute_info * 
     // para percorrer os registros attributes_info
     attribute_info *    attributes;
     uint16_t            attributes_count;
-    
+
     // se for attributes de field_info
     if(fd_in != NULL)
     {
         fd_in->attributes_count = u2Read(file);
-        
+
         // se tamanho maior que zero
         if(fd_in->attributes_count)
         {
             // aloca vetor de attributes_info
-            fd_in->attributes = (attribute_info *) malloc(fd_in->attributes_count * sizeof(attribute_info));    
+            fd_in->attributes = (attribute_info *) malloc(fd_in->attributes_count * sizeof(attribute_info));
         // se tamanho igual a zero
         }else
         {
@@ -395,17 +395,17 @@ void obtainAttributes(field_info * fd_in, method_info * mt_in, attribute_info * 
     else if(mt_in != NULL)
     {
         mt_in->attributes_count = u2Read(file);
-        
+
         // se tamanho maior que zero
         if(mt_in->attributes_count)
         {
             // aloca vetor de attributes_info
-            mt_in->attributes = (attribute_info *) malloc(mt_in->attributes_count * sizeof(attribute_info));    
+            mt_in->attributes = (attribute_info *) malloc(mt_in->attributes_count * sizeof(attribute_info));
         // se tamanho igual a zero
         }else
         {
             mt_in->attributes = NULL;
-        }       
+        }
         attributes_count = mt_in->attributes_count;
         attributes = mt_in->attributes;
     }
@@ -450,25 +450,25 @@ void obtainAttributes(field_info * fd_in, method_info * mt_in, attribute_info * 
         puts("[EROOOOU] nao foi possivel obter os attributes. verifique");
         exit(EXIT_FAILURE);
     }
-    
-    // percorre os registros attribute_info de acordo com a quantidade attributes_count e o 
+
+    // percorre os registros attribute_info de acordo com a quantidade attributes_count e o
     // vetor de atributos attributes
     for(attribute_info * attr = attributes; attr < (attributes + attributes_count); attr++)
     {
         attr->attribute_name_index = u2Read(file);
         attr->attribute_length = u4Read(file);
-        
+
         // obtem tipo de atributo de acordo com a contant_pool
         ATTRIBUTE_TYPE attrTypeResult = getAttributeType(attr, cf);
-        
+
         // dependendo do tipo fo atributo
         switch(attrTypeResult)
         {
-            // 4.7.2. The ConstantValue Attribute 
+            // 4.7.2. The ConstantValue Attribute
             case CONSTANT_VALUE: // 0
                 attr->u.ConstantValue.constantvalue_index = u2Read(file);
                 break;
-            // 4.7.3. The Code Attribute 
+            // 4.7.3. The Code Attribute
             case CODE: // 1
                  attr->u.Code.max_stack = u2Read(file);
                     attr->u.Code.max_locals = u2Read(file);
@@ -478,36 +478,36 @@ void obtainAttributes(field_info * fd_in, method_info * mt_in, attribute_info * 
                         for(uint8_t * cd = attr->u.Code.code; cd < (attr->u.Code.code + attr->u.Code.code_length); cd++)
                             *cd = u1Read(file);
                     }
-                    
-                    
+
+
                     attr->u.Code.exception_table_length = u2Read(file);
                     if(attr->u.Code.exception_table_length){
                         attr->u.Code.exception_table =
                         (exception_table_type *) malloc(attr->u.Code.exception_table_length * sizeof(exception_table_type));
-                        
+
                         for(exception_table_type * ex_tb = attr->u.Code.exception_table;
                             ex_tb < (attr->u.Code.exception_table + attr->u.Code.exception_table_length); ex_tb++){
                             ex_tb->start_pc = u2Read(file);
                             ex_tb->end_pc = u2Read(file);
-                            ex_tb->handler_pc = u2Read(file);   
-                            ex_tb->catch_type = u2Read(file);                   
+                            ex_tb->handler_pc = u2Read(file);
+                            ex_tb->catch_type = u2Read(file);
                         }
                     }
                     obtainAttributes(NULL, NULL, attr, cf, file);
                     break;
-            // 4.7.15. The Deprecated Attribute 
+            // 4.7.15. The Deprecated Attribute
             case DEPRECATED: // 2
                 // nada
                 break;
-            // 4.7.5. The Exceptions Attribute 
+            // 4.7.5. The Exceptions Attribute
             case EXCEPTIONS: // 3
                 attr->u.Exceptions.number_of_exceptions = u2Read(file);
                     attr->u.Exceptions.exception_index_table = (uint16_t *) malloc(attr->u.Exceptions.number_of_exceptions * sizeof(uint16_t));
-                    for(uint16_t * ex_in_tb = attr->u.Exceptions.exception_index_table; 
+                    for(uint16_t * ex_in_tb = attr->u.Exceptions.exception_index_table;
                         ex_in_tb < (attr->u.Exceptions.exception_index_table + attr->u.Exceptions.number_of_exceptions); ex_in_tb++)
-                        * ex_in_tb = u2Read(file);  
+                        * ex_in_tb = u2Read(file);
                 break;
-            // 4.7.6. The InnerClasses Attribute 
+            // 4.7.6. The InnerClasses Attribute
             case INNER_CLASSES: // 4
                 attr->u.InnerClasses.number_of_classes = u2Read(file);
                     attr->u.InnerClasses.classes =
@@ -520,28 +520,28 @@ void obtainAttributes(field_info * fd_in, method_info * mt_in, attribute_info * 
                         cl->inner_class_access_flags = u2Read(file);
                     }
                 break;
-            // 4.7.12. The LineNumberTable Attribute 
+            // 4.7.12. The LineNumberTable Attribute
             case LINE_NUMBER_TABLE: // 5
                 attr->u.LineNumberTable.line_number_table_length = u2Read(file);
                     if(attr->u.LineNumberTable.line_number_table_length){
                         attr->u.LineNumberTable.line_number_table = (line_number_table_type *)
                         malloc(attr->u.LineNumberTable.line_number_table_length * sizeof(line_number_table_type));
-                        
-                        for(line_number_table_type * ln_tb = attr->u.LineNumberTable.line_number_table; 
-                            ln_tb < (attr->u.LineNumberTable.line_number_table + attr->u.LineNumberTable.line_number_table_length); ln_tb++){   
+
+                        for(line_number_table_type * ln_tb = attr->u.LineNumberTable.line_number_table;
+                            ln_tb < (attr->u.LineNumberTable.line_number_table + attr->u.LineNumberTable.line_number_table_length); ln_tb++){
                             ln_tb->start_pc = u2Read(file);
                             ln_tb->line_number = u2Read(file);
-                        }           
+                        }
                     }
                 break;
-            // 4.7.13. The LocalVariableTable Attribute 
+            // 4.7.13. The LocalVariableTable Attribute
             case LOCAL_VARIABLE_TABLE: // 6
                 attr->u.LocalVariableTable.local_variable_table_length = u2Read(file);
                     if(attr->u.LocalVariableTable.local_variable_table_length){
                         attr->u.LocalVariableTable.local_variable_table = (local_variable_table_type *)
                         malloc(attr->u.LocalVariableTable.local_variable_table_length * sizeof(local_variable_table_type));
-                        
-                        for(local_variable_table_type * lv_tb = attr->u.LocalVariableTable.local_variable_table; 
+
+                        for(local_variable_table_type * lv_tb = attr->u.LocalVariableTable.local_variable_table;
                             lv_tb < (attr->u.LocalVariableTable.local_variable_table +
                                      attr->u.LocalVariableTable.local_variable_table_length); lv_tb++){
                                 lv_tb->start_pc = u2Read(file);
@@ -552,11 +552,11 @@ void obtainAttributes(field_info * fd_in, method_info * mt_in, attribute_info * 
                             }
                     }
                 break;
-            // 4.7.8. The Synthetic Attribute 
+            // 4.7.8. The Synthetic Attribute
             case SYNTHETIC: // 7
                 // nada
                 break;
-            // 4.7.10. The SourceFile Attribute 
+            // 4.7.10. The SourceFile Attribute
             case SOURCE_FILE: // 8
                 attr->u.SourceFile.sourcefile_index = u2Read(file);
                 break;
@@ -585,12 +585,12 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
 {
     float versao;
     constant_pool_info * constPool;
-    
+
     // mostrar Informação Geral
     fprintf(saida,"\n\n####### Aqui vao as informacoes gerais, ta ok?\n\n");
-    fprintf(saida, "Numero magico:\t\t0x%" PRIX32 "\n", cf->magic);               // hexadecimal printf format for uint32_t 
-    fprintf(saida, "Minor version:\t\t\t%" PRId16 "\n", cf->minor_version); // decimal printf format for int16_t 
-    
+    fprintf(saida, "Numero magico:\t\t0x%" PRIX32 "\n", cf->magic);               // hexadecimal printf format for uint32_t
+    fprintf(saida, "Minor version:\t\t\t%" PRId16 "\n", cf->minor_version); // decimal printf format for int16_t
+
     switch(cf->major_version)
     {
         case 45:
@@ -621,18 +621,18 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
             versao = 0.0;
     }
 
-    fprintf(saida, "Major version:\t\t\t%" PRIu16 "\t[%.1f]\n", cf->major_version, versao); // decimal printf format for uint16_t 
+    fprintf(saida, "Major version:\t\t\t%" PRIu16 "\t[%.1f]\n", cf->major_version, versao); // decimal printf format for uint16_t
     fprintf(saida, "Constant pool count:\t\t\t%" PRIu16 "\n", cf->constant_pool_count);
     fprintf(saida, "Access flags:\t\t\t0x%.4" PRIX16 "\t[", cf->access_flags);
-    
+
     uint16_t access_flags = cf->access_flags;
-    
+
     // o access_flags eh um campo de 16 bits
     //em que cada bit significa uma flag
     //se for 1 significa que a tal flag esta setada
     //cc nao esta
     //dessa forma, access_flags tem sua representacao em decimal
-    //e subtraindo o valor decimal de cada flag, podemos testar 
+    //e subtraindo o valor decimal de cada flag, podemos testar
     //os proximos bits menos signifcativos
     if(access_flags >= ACC_ABSTRACT)
     {
@@ -647,7 +647,7 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
         fprintf(saida, "super ");
         access_flags -= ACC_SUPER;
     }
-    
+
     if(access_flags >= ACC_FINAL){
         fprintf(saida, "final ");
         access_flags -= ACC_FINAL;
@@ -657,11 +657,11 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
         access_flags -= ACC_PUBLIC;
     }
     fprintf(saida,"]\n");
-    
+
     // obtainlocale (LC_ALL, "" );
-    
+
     fprintf(saida, "Vc me mandou a classe:\t\t\tcp_info #%" PRIu16, cf->this_class);
-    
+
     if(cf->constant_pool[cf->this_class-1].tag != CONSTANT_Class)
     {
         puts("\n[EROOOOU] this_class nao aponta para uma CONSTANT_Class_info. verifique\n");
@@ -683,7 +683,7 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
             fprintf(saida, ">\n");
         }
     }
-    
+
     // se for zero
     if(!cf->super_class)
     {
@@ -713,7 +713,7 @@ void showGeneralInfo(ClassFile * cf,  FILE * saida)
             }
         }
     }
-    
+
     fprintf(saida, "Interfaces count:\t\t\t%" PRIu16 "\n", cf->interfaces_count);
     fprintf(saida, "Fields count:\t\t\t\t%" PRIu16 "\n", cf->fields_count);
     fprintf(saida, "Methods count:\t\t\t\t%" PRIu16 "\n", cf->methods_count);
@@ -749,13 +749,13 @@ void showConstantPool(ClassFile * cf, FILE * saida)
                     fprintf(saida, "[%" PRIu16 "] CONSTANT_Methodref_info\t", i);
                 else if(constPool->tag == CONSTANT_InterfaceMethodref)
                     fprintf(saida, "[%" PRIu16 "] CONSTANT_InterfaceMethodref_info\t", i);
-                
+
                 // This constant_pool entry indicates the name and descriptor of the field or method.
-                // In a CONSTANT_Fieldref_info, the indicated descriptor must be a field descriptor (§4.3.2). 
+                // In a CONSTANT_Fieldref_info, the indicated descriptor must be a field descriptor (§4.3.2).
                 // Otherwise, the indicated descriptor must be a method descriptor (§4.3.3).
-                // If the name of the method of a CONSTANT_Methodref_info structure begins with a '<' ('\u003c'), 
-                // then the name must be the special name <init>, representing an instance initialization method (§2.9). 
-                // The return type of such a method must be void. 
+                // If the name of the method of a CONSTANT_Methodref_info structure begins with a '<' ('\u003c'),
+                // then the name must be the special name <init>, representing an instance initialization method (§2.9).
+                // The return type of such a method must be void.
                 fprintf(saida, "\tClass name:\tcp_info #%" PRIu16 "\t<", constPool->u.Ref.name_index);
                 printConstantRef(cf,constPool,'c',saida); // Class name
                 fprintf(saida, ">\tName and type:\tcp_info #%" PRIu16 "\t<", constPool->u.Ref.name_and_type_index);
@@ -783,39 +783,39 @@ void showConstantPool(ClassFile * cf, FILE * saida)
                 fprintf(saida, "[%" PRIu16 "] CONSTANT_Float_info\t", i);
                 fprintf(saida, "\tBytes:\t0x%.8" PRIx32, constPool->u.Integer_Float.bytes);
                 bits32 = (int32_t) constPool->u.Integer_Float.bytes;
-                
+
                 switch(bits32)
                 {
-                    // If bits is 0x7f800000, the float value will be positive infinity. 
+                    // If bits is 0x7f800000, the float value will be positive infinity.
                     case 0x7f800000:
                         fprintf(saida, "\tFloat:\t+infinity\n");
                         break;
-                    // If bits is 0xff800000, the float value will be negative infinity. 
+                    // If bits is 0xff800000, the float value will be negative infinity.
                     case 0xff800000:
                         fprintf(saida, "\tFloat:\t-infinity\n");
                         break;
                     default:
-                        // If bits is in the range 0x7f800001 through 0x7fffffff or in the range 0xff800001 
-                        // through 0xffffffff, the float value will be NaN.  
+                        // If bits is in the range 0x7f800001 through 0x7fffffff or in the range 0xff800001
+                        // through 0xffffffff, the float value will be NaN.
                         if((bits32 >= 0x7f800001 && bits32 <= 0x7fffffff) ||
                            (bits32 >= 0xff800001 && bits32 <= 0xffffffff )){
                             fprintf(saida, "\tFloat:\tNaN\n");
                         }
-                        // In all other cases, let s, e, and m be three values that might be computed from bits: 
+                        // In all other cases, let s, e, and m be three values that might be computed from bits:
                         else{
                             int32_t s = ((bits32 >> 31) == 0) ? 1 : -1;
                             int32_t e = ((bits32 >> 23) & 0xff);
                             int32_t m = (e == 0) ?
                                     (bits32 & 0x7fffff) << 1 :
                                     (bits32 & 0x7fffff) | 0x800000;
-                            // Then the float value equals the result of the mathematical expression s · m · 2e-150. 
+                            // Then the float value equals the result of the mathematical expression s · m · 2e-150.
                             fprintf(saida, "\tFloat:\t%f\n", (double) s*m*pow(2, (e-150)));
                         }
                 }
                 break;
             case CONSTANT_Long:
                 // ((long) high_bytes << 32) + low_bytes
-                
+
                 fprintf(saida, "[%" PRIu16 "] CONSTANT_Long_info\t", i);
                 fprintf(saida, "\tHigh bytes\t 0x%.8" PRIx32, constPool->u.Long_Double.high_bytes);
                 fprintf(saida, "\tLow bytes:\t0x%.8" PRIx32, constPool->u.Long_Double.low_bytes);
@@ -837,25 +837,25 @@ void showConstantPool(ClassFile * cf, FILE * saida)
                 fprintf(saida, "\tHigh bytes:\t\t0x%.8" PRIx32, constPool->u.Long_Double.high_bytes);
                 fprintf(saida, "\n\tLow bytes:\t\t0x%.8" PRIx32, constPool->u.Long_Double.low_bytes);
                 bits64 = (((int64_t) constPool->u.Long_Double.high_bytes) << 32) + constPool->u.Long_Double.low_bytes;
-                
+
                 switch(bits64)
                 {
-                    // If bits is 0x7ff0000000000000L, the double value will be positive infinity. 
+                    // If bits is 0x7ff0000000000000L, the double value will be positive infinity.
                     case 0x7ff0000000000000L:
                         fprintf(saida, "\n\tDouble:\t\t+infinity\n");
                         break;
-                    // If bits is 0xfff0000000000000L, the double value will be negative infinity. 
+                    // If bits is 0xfff0000000000000L, the double value will be negative infinity.
                     case 0xfff0000000000000L:
                         fprintf(saida, "\n\tDouble:\t\t-infinity\n");
                         break;
                     default:
-                        // If bits is in the range 0x7ff0000000000001L through 0x7fffffffffffffffL or in the range 0xfff0000000000001L 
-                        // through 0xffffffffffffffffL, the double value will be NaN. 
+                        // If bits is in the range 0x7ff0000000000001L through 0x7fffffffffffffffL or in the range 0xfff0000000000001L
+                        // through 0xffffffffffffffffL, the double value will be NaN.
                         if((bits64 >= 0x7ff0000000000001L && bits64 <= 0x7ffffffffffffL) ||
                            (bits64 >= 0xfff0000000000001L && bits64 <= 0xffffffffffffffffL )){
                             fprintf(saida, "\n\tDouble:\t\tNaN\n");
                         }
-                        // In all other cases, let s, e, and m be three values that might be computed from bits: 
+                        // In all other cases, let s, e, and m be three values that might be computed from bits:
                         else{
                             int32_t s = ((bits64 >> 63) == 0) ? 1 : -1;
                             int32_t e = ((bits64 >> 52) & 0x7ffL);
@@ -896,15 +896,15 @@ void showConstantPool(ClassFile * cf, FILE * saida)
 // imprime interfaces do ClassFile
 void showInterfaces(ClassFile * cf, FILE * saida)
 {
-    
+
     fprintf(saida,"\n####### #Partiu! Interfaces\n");
-    
+
     for(uint16_t i = 0; i < cf->interfaces_count; i++)
     {
         fprintf(saida, "Interface %" PRIu16, i);
-        
+
         fprintf(saida,"\tcp_info #%" PRIu16, cf->interfaces[i]);
-        
+
         // se nao for CONSTANT_Class
         if(cf->constant_pool[cf->interfaces[i]-1].tag != CONSTANT_Class)
         {
@@ -914,7 +914,7 @@ void showInterfaces(ClassFile * cf, FILE * saida)
         {
             uint16_t name_index;
             constant_pool_info * constPool;
-            
+
             name_index = cf->constant_pool[cf->interfaces[i]-1].u.Class.name_index;
             constPool = cf->constant_pool + name_index - 1;
             // se nao for CONSTANT_Utf8
@@ -960,7 +960,7 @@ void showFields(ClassFile * cf, FILE * saida)
         fprintf(saida, "\t<");
         printConstUtf8(constPool, saida);
         fprintf(saida, ">\n");
-        
+
         uint16_t    descriptor_index = (cf->fields+i)->descriptor_index;
         constPool = cf->constant_pool + descriptor_index - 1;
         // se nao for CONSTANT_Utf8
@@ -974,8 +974,8 @@ void showFields(ClassFile * cf, FILE * saida)
         fprintf(saida, "\t<");
         printConstUtf8(constPool, saida);
         fprintf(saida, ">\n");
-        
-        // printa acess_flags em hexadecimal 
+
+        // printa acess_flags em hexadecimal
         fprintf(saida,"\tAccess Flags:\t0x%.4" PRIx16 "\t[", (cf->fields+i)->access_flags);
         uint16_t access_flags = (cf->fields+i)->access_flags;
         // o access_flags eh um campo de 16 bits
@@ -983,7 +983,7 @@ void showFields(ClassFile * cf, FILE * saida)
         //se for 1 significa que a tal flag esta setada
         //cc nao esta
         //dessa forma, access_flags tem sua representacao em decimal
-        //e subtraindo o valor decimal de cada flag, podemos testar 
+        //e subtraindo o valor decimal de cada flag, podemos testar
         //os proximos bits menos significativos
 
         if(access_flags >= ACC_TRANSIENT)
@@ -1022,7 +1022,7 @@ void showFields(ClassFile * cf, FILE * saida)
             access_flags -= ACC_PUBLIC;
         }
         fprintf(saida,"]\n");
-        
+
         fprintf(saida,"\n\tNumeros de atributos no field:\t%" PRIu16 "\n", (cf->fields+i)->attributes_count);
         field_info * fd_in = (cf->fields+i);
         showAttributes(fd_in, NULL, NULL, cf, saida);
@@ -1080,7 +1080,7 @@ void showMethods(ClassFile * cf, FILE * saida)
         //se for 1 significa que a tal flag esta setada
         //cc nao esta
         //dessa forma, access_flags tem sua representacao em decimal
-        //e subtraindo o valor decimal de cada flag, podemos testar 
+        //e subtraindo o valor decimal de cada flag, podemos testar
         //os proximos bits menos significativos
 
         if(access_flags >= ACC_STRICT)
@@ -1152,7 +1152,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
     uint16_t attributes_count;
     attribute_info * attributes;
     int attribute_tab;
-    
+
     // se for attributes do fields
     if(fd_in != NULL)
     {
@@ -1184,7 +1184,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
         attributes = cf->attributes;
         attribute_tab = CLASS;
     }
-    
+
     uint16_t name_index;
     constant_pool_info* constPool;
     attribute_info* attributes_aux = attributes;
@@ -1197,7 +1197,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
         {
             puts("\n[EROOOOU] atributo nao referencia um name_index valido. Ta tudo errado por aqui, e por ai?\n");
             exit(EXIT_FAILURE);
-        }  
+        }
 
         switch(attribute_tab)
         {
@@ -1206,13 +1206,13 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     fprintf(saida, "[%" PRIu16 "]\t", i);
                     printConstUtf8(constPool, saida);
                     fprintf(saida, "\n");
-                    
+
                     fprintf(saida, "\tGeneric info:\n");
                     fprintf(saida, "\t\tAttribute name index:\tcp_info #%" PRIu16, attributes_aux->attribute_name_index);
                     fprintf(saida, "\t");
                     printConstUtf8(constPool, saida);
                     fprintf(saida, "\n");
-                    
+
                     fprintf(saida, "\t\tAttribute lenght:\t%" PRIu16 "\n", attributes_aux->attribute_length);
                     fprintf(saida, "\tSpecific info:\n");
                     break;
@@ -1222,13 +1222,13 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     fprintf(saida, "\t");
                     printConstUtf8(constPool, saida);
                     fprintf(saida, "\n");
-                    
+
                     fprintf(saida, "\t\tGeneric info:\n");
                     fprintf(saida, "\t\t\tAttribute name index:\tcp_info #%" PRIu16, attributes_aux->attribute_name_index);
                     fprintf(saida, "\t");
                     printConstUtf8(constPool, saida);
                     fprintf(saida, "\n");
-                    
+
                     fprintf(saida, "\t\t\tAttribute lenght:\t%" PRIu16 "\n", attributes_aux->attribute_length);
                     fprintf(saida, "\t\tSpecific info:\n");
                     break;
@@ -1238,13 +1238,13 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     fprintf(saida, "\t");
                     printConstUtf8(constPool, saida);
                     fprintf(saida, "\n");
-                    
+
                     fprintf(saida, "\t\tGeneric info:\n");
                     fprintf(saida, "\t\t\tAttribute name index:\tcp_info #%" PRIu16, attributes_aux->attribute_name_index);
                     fprintf(saida, "\t");
                     printConstUtf8(constPool, saida);
                     fprintf(saida, "\n");
-                    
+
                     fprintf(saida, "\t\t\tAttribute lenght:\t%" PRIu16 "\n", attributes_aux->attribute_length);
                     fprintf(saida, "\t\tSpecific info:\n");
                     break;
@@ -1269,11 +1269,11 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         fprintf(saida, "\t<%" PRId32 ">\n", cp_a0->u.Integer_Float.bytes);
                         break;
                     case CONSTANT_Long:
-                    // The unsigned high_bytes and low_bytes items of the CONSTANT_Long_info structure together represent the value of the long constant 
+                    // The unsigned high_bytes and low_bytes items of the CONSTANT_Long_info structure together represent the value of the long constant
                         bits64 = (((int64_t) cp_a0->u.Long_Double.high_bytes) << 32) + cp_a0->u.Long_Double.low_bytes;
                         fprintf(saida,"\t<%" PRId64 ">\n", bits64);
                         break;
-                    case CONSTANT_Float: 
+                    case CONSTANT_Float:
 
                         // int s = ((bits >> 31) == 0) ? 1 : -1;
                         // int e = ((bits >> 23) & 0xff);
@@ -1283,56 +1283,56 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
 
                         bits32 = (int32_t) constPool->u.Integer_Float.bytes;
                         fprintf(saida, "\t<%" PRId32 ">\n", bits32);
-                        
+
                         switch(bits32)
                         {
-                            // If bits is 0x7f800000, the float value will be positive infinity. 
+                            // If bits is 0x7f800000, the float value will be positive infinity.
                             case 0x7f800000:
                                 fprintf(saida, "\n\tFloat:\t\t+infinity\n");
                                 break;
-                            // If bits is 0xff800000, the float value will be negative infinity. 
+                            // If bits is 0xff800000, the float value will be negative infinity.
                             case 0xff800000:
                                 fprintf(saida, "\n\tFloat:\t\t-infinity\n");
                                 break;
                             default:
-                                // If bits is in the range 0x7f800001 through 0x7fffffff or in the range 0xff800001 
-                                // through 0xffffffff, the float value will be NaN.  
+                                // If bits is in the range 0x7f800001 through 0x7fffffff or in the range 0xff800001
+                                // through 0xffffffff, the float value will be NaN.
                                 if((bits32 >= 0x7f800001 && bits32 <= 0x7fffffff) ||
                                    (bits32 >= 0xff800001 && bits32 <= 0xffffffff )){
                                     fprintf(saida, "\n\tFloat:\t\tNaN\n");
                                 }
-                                // In all other cases, let s, e, and m be three values that might be computed from bits: 
+                                // In all other cases, let s, e, and m be three values that might be computed from bits:
                                 else{
                                     int32_t s = ((bits32 >> 31) == 0) ? 1 : -1;
                                     int32_t e = ((bits32 >> 23) & 0xff);
                                     int32_t m = (e == 0) ?
                                             (bits32 & 0x7fffff) << 1 :
                                             (bits32 & 0x7fffff) | 0x800000;
-                                    // Then the float value equals the result of the mathematical expression s · m · 2e-150. 
+                                    // Then the float value equals the result of the mathematical expression s · m · 2e-150.
                                     fprintf(saida, "\n\tFloat:\t\t%f\n", (double) s*m*pow(2, (e-150)));
                                 }
                         }
-                        break;                          
+                        break;
                     case CONSTANT_Double:
                     // the value represented by the CONSTANT_Double_info structure is determined as follows. The high_bytes and low_bytes items are converted into the long constant bits
                         bits64 = (((int64_t) cp_a0->u.Long_Double.high_bytes) << 32) + cp_a0->u.Long_Double.low_bytes;
                         switch(bits64)
-                        {// if bits is 0x7ff0000000000000L, the double value will be positive infinity. 
+                        {// if bits is 0x7ff0000000000000L, the double value will be positive infinity.
                             case 0x7ff0000000000000L:
                                 fprintf(saida, "\t<+infinity>\n");
                                 break;
-                        // if bits is 0xfff0000000000000L, the double value will be negative infinity.       
+                        // if bits is 0xfff0000000000000L, the double value will be negative infinity.
                             case 0xfff0000000000000L:
                                 fprintf(saida, "\t<-infinity>\n");
                                 break;
                             default:
                             //If bits is in the range 0x7ff0000000000001L through 0x7fffffffffffffffL
-                            // or in the range 0xfff0000000000001L through 0xffffffffffffffffL, the double value will be NaN. 
+                            // or in the range 0xfff0000000000001L through 0xffffffffffffffffL, the double value will be NaN.
                                 if((bits64 >= 0x7ff0000000000001L && bits64 <= 0x7ffffffffffffL) ||
                                    (bits64 >= 0xfff0000000000001L && bits64 <= 0xffffffffffffffffL ))
                                 {
                                        fprintf(saida, "\t<NaN>\n");
-                                } //In all other cases, let s, e, and m be three values that might be computed from bits: 
+                                } //In all other cases, let s, e, and m be three values that might be computed from bits:
                                 else
                                 {
                                     int32_t s = ((bits64 >> 63) == 0) ? 1 : -1;
@@ -1343,7 +1343,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                                     0x10000000000000L;
                                     fprintf(saida, "\t<%f>\n",
                                             (double) s*m*pow(2, (e-1075)));
-                                }//Then the floating-point value equals the double value of the mathematical expression s · m · 2e-1075. 
+                                }//Then the floating-point value equals the double value of the mathematical expression s · m · 2e-1075.
                         }
                             break;
                     case CONSTANT_String:
@@ -1362,7 +1362,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                 uint32_t i;
                 int32_t default_, n;
                 int16_t const_;
-                
+
                 for(uint32_t offset = 0; offset < attributes_aux->u.Code.code_length;)
                 {
                     fprintf(saida,"\t\t\t%" PRIu32 "\t%" PRIu32"\t", lineNumber++,offset);
@@ -1371,303 +1371,154 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     switch(*nextCode){
                         // complemento 0 bytes
                         case aaload:
-            printf("aaload"); break;
-        case aastore:
-            printf("aastore"); break;
-        case aconst_null:
-            printf("aconst_null"); break;
-        case aload_0:
-            printf("aload_0"); break;
-        case aload_1:
-            printf("aload_1");break;
-        case aload_2:
-            printf("aload_2");break;
-        case aload_3:
-            printf("aload_3"); break;
-        case areturn:
-            printf("areturn"); break;
-        case arraylength:
-            printf("arraylength"); break;
-        case astore_0:
-            printf("astore_0"); break;
-        case astore_1:
-            printf("astore_1"); break;
-        case astore_2:
-            printf("astore_2"); break;
-        case astore_3:
-            printf("astore_3"); break;
-        case athrow:
-            printf("athrow"); break;
-        case baload:
-            printf("baload"); break;
-        case bastore:
-            printf("bastore"); break;
-        case breakpoint:
-            printf("breakpoint"); break;
-        case caload:
-            printf("caload"); break;
-        case castore:
-            printf("castore"); break;
-        case d2f:
-            printf("d2f"); break;
-        case d2i:
-            printf("d2i"); break;
-        case d2l:
-            printf("d21"); break;
-        case dadd:
-            printf("dadd"); break;
-        case daload:
-            printf("daload"); break;
-        case dastore:
-            printf("dastore"); break;
-        case dcmpg:
-            printf("dcmpg"); break;
-        case dcmpl:
-            printf("dcmpl"); break;
-        case dconst_0:
-            printf("dconst_0"); break;
-        case dconst_1:
-            printf("dconst_1"); break;
-        case ddiv:
-            printf("ddiv"); break;
-        case dload_0:
-            printf("dload_0"); break;
-        case dload_1:
-            printf("dload_1"); break;
-        case dload_2:
-            printf("dload_2"); break;
-        case dload_3:
-            printf("dload_3"); break;
-        case dmul:
-            printf("dmul"); break;
-        case dneg:
-            printf("dneg"); break;
-        case drem:
-            printf("drem"); break;
-        case dreturn:
-            printf("dreturn"); break;
-        case dstore_0:
-            printf("dstore_0"); break;
-        case dstore_1:
-            printf("dstore_1"); break;
-        case dstore_2:
-            printf("dstore_2"); break;
-        case dstore_3:
-            printf("dstore_3"); break;
-        case dsub:
-            printf("dsub"); break;
-        case dup:
-            printf("dup"); break;
-        case dup_x1:
-            printf("dup_x1"); break;
-        case dup_x2:
-            printf("dup_x2"); break;
-        case dup2:
-            printf("dup2"); break;
-        case dup2_x1:
-            printf("dup2_x1"); break;
-        case dup2_x2:
-            printf("dup2_x2"); break;
-        case f2d:
-            printf("f2d"); break;
-        case f2i:
-            printf("f2i"); break;
-        case f2l:
-            printf("f21"); break;
-        case fadd:
-            printf("fadd"); break;
-        case faload:
-            printf("fload"); break;
-        case fastore:
-            printf("fastore"); break;
-        case fcmpg:
-            printf("fcmpg"); break;
-        case fcmpl:
-            printf("fcmpl"); break;
-        case fconst_0:
-            printf("fconst_0"); break;
-        case fconst_1:
-            printf("fconst_1"); break;
-        case fconst_2:
-            printf("fconst_2"); break;
-        case fdiv:
-            printf("fdiv"); break;
-        case fload_0:
-            printf("fload_0"); break;
-        case fload_1:
-            printf("fload_1"); break;
-        case fload_2:
-            printf("fload_2"); break;
-        case fload_3:
-            printf("fload_3"); break;
-        case fmul:
-            printf("fmul"); break;
-        case fneg:
-            printf("fneg"); break;
-        case frem:
-            printf("frem"); break;
-        case freturn:
-            printf("freturn"); break;
-        case fstore_0:
-            printf("fstore"); break;
-        case fstore_1:
-            printf("fstore_1"); break;
-        case fstore_2:
-            printf("fstore_2"); break;
-        case fstore_3:
-            printf("fstore_3"); break;
-        case fsub:
-            printf("fsub"); break;
-        case i2b:
-            printf("i2b"); break;
-        case i2c:
-            printf("i2c"); break;
-        case i2d:
-            printf("i2d"); break;
-        case i2f:
-            printf("i2f"); break;
-        case i2l:
-            printf("i21"); break;
-        case i2s:
-            printf("i2s"); break;
-        case iadd:
-            printf("iadd"); break;
-        case iaload:
-            printf("iaload"); break;
-        case iand:
-            printf("iand"); break;
-        case iastore:
-            printf("iastore"); break;
-        case iconst_m1:
-            printf("iconst_ml"); break;
-        case iconst_0:
-            printf("iconst_0"); break;
-        case iconst_1:
-            printf("iconst_1"); break;
-        case iconst_2:
-            printf("iconst_2"); break;
-        case iconst_3:
-            printf("iconst_3"); break;
-        case iconst_4:
-            printf("iconst_4"); break;
-        case iconst_5:
-            printf("iconst_5"); break;
-        case idiv:
-            printf("idiv"); break;
-        case iload_0:
-            printf("iload_0"); break;
-        case iload_1:
-            printf("iload_1"); break;
-        case iload_2:
-            printf("iload_2"); break;
-        case iload_3:
-            printf("iload_3"); break;
-        case impdep1:
-            printf("impdepl"); break;
-        case impdep2:
-            printf("impdep2"); break;
-        case imul:
-            printf("imul"); break;
-        case ineg:
-            printf("ineg"); break;
-        case ior:
-            printf("ior"); break;
-        case irem:
-            printf("irem"); break;
-        case ireturn:
-            printf("ireturn"); break;
-        case ishl:
-            printf("ishl"); break;
-        case ishr:
-            printf("ishr"); break;
-        case istore_0:
-            printf("istore_0"); break;
-        case istore_1:
-            printf("istore_1"); break;
-        case istore_2:
-            printf("istore_2"); break;
-        case istore_3:
-            printf("istore_3"); break;
-        case isub:
-            printf("isub"); break;
-        case iushr:
-            printf("iushr"); break;
-        case ixor:
-            printf("ixor"); break;
-        case l2d:
-            printf("l2d"); break;
-        case l2f:
-            printf("l2f"); break;
-        case l2i:
-            printf("l2i"); break;
-        case ladd:
-            printf("ladd"); break;
-        case laload:
-            printf("laload"); break;
-        case land:
-            printf("land"); break;
-        case lastore:
-            printf("lastore"); break;
-        case lcmp:
-            printf("lcmp"); break;
-        case lconst_0:
-            printf("lconst_0"); break;
-        case lconst_1:
-            printf("lconst_1"); break;
-        case ldiv_:
-            printf("ldiv_"); break;
-        case lload_0:
-            printf("lload_0"); break;
-        case lload_1:
-            printf("lload_1"); break;
-        case lload_2:
-            printf("lload_2"); break;
-        case lload_3:
-            printf("lload_3"); break;
-        case lmul:
-            printf("lmul"); break;
-        case lneg:
-            printf("lneg"); break;
-        case lor:
-            printf("lor"); break;
-        case lrem:
-            printf("lrem"); break;
-        case lreturn:
-            printf("lreturn"); break;
-        case lshl:
-            printf("lshl"); break;
-        case lshr:
-            printf("lshr"); break;
-        case lstore_0:
-            printf("lstore_0"); break;
-        case lstore_1:
-            printf("lstore_1"); break;
-        case lstore_2:
-            printf("lstore_2"); break;
-        case lstore_3:
-            printf("lstore_3"); break;
-        case lsub:
-            printf("lsub"); break;
-        case lushr:
-            printf("lushr"); break;
-        case lxor:
-            printf("lxor"); break;
-        case monitorenter:
-            printf("monitorenter"); break;
-        case monitorexit:
-            printf("monitorexit"); break;
-        case nop:
-            printf("nop"); break;
-        case pop:
-            printf("pop"); break;
-        case pop2:
-            printf("pop2"); break;
-        case return_:
-            printf("return_"); break;
-        case saload:
-            printf("saload"); break;
-        case sastore:
-            printf("sastore"); break;
+                        case aastore:
+                        case aconst_null:
+                        case aload_0:
+                        case aload_1:
+                        case aload_2:
+                        case aload_3:
+                        case areturn:
+                        case arraylength:
+                        case astore_0:
+                        case astore_1:
+                        case astore_2:
+                        case astore_3:
+                        case athrow:
+                        case baload:
+                        case bastore:
+                        case breakpoint:
+                        case caload:
+                        case castore:
+                        case d2f:
+                        case d2i:
+                        case d2l:
+                        case dadd:
+                        case daload:
+                        case dastore:
+                        case dcmpg:
+                        case dcmpl:
+                        case dconst_0:
+                        case dconst_1:
+                        case ddiv:
+                        case dload_0:
+                        case dload_1:
+                        case dload_2:
+                        case dload_3:
+                        case dmul:
+                        case dneg:
+                        case drem:
+                        case dreturn:
+                        case dstore_0:
+                        case dstore_1:
+                        case dstore_2:
+                        case dstore_3:
+                        case dsub:
+                        case dup:
+                        case dup_x1:
+                        case dup_x2:
+                        case dup2:
+                        case dup2_x1:
+                        case dup2_x2:
+                        case f2d:
+                        case f2i:
+                        case f2l:
+                        case fadd:
+                        case faload:
+                        case fastore:
+                        case fcmpg:
+                        case fcmpl:
+                        case fconst_0:
+                        case fconst_1:
+                        case fconst_2:
+                        case fdiv:
+                        case fload_0:
+                        case fload_1:
+                        case fload_2:
+                        case fload_3:
+                        case fmul:
+                        case fneg:
+                        case frem:
+                        case freturn:
+                        case fstore_0:
+                        case fstore_1:
+                        case fstore_2:
+                        case fstore_3:
+                        case fsub:
+                        case i2b:
+                        case i2c:
+                        case i2d:
+                        case i2f:
+                        case i2l:
+                        case i2s:
+                        case iadd:
+                        case iaload:
+                        case iand:
+                        case iastore:
+                        case iconst_m1:
+                        case iconst_0:
+                        case iconst_1:
+                        case iconst_2:
+                        case iconst_3:
+                        case iconst_4:
+                        case iconst_5:
+                        case idiv:
+                        case iload_0:
+                        case iload_1:
+                        case iload_2:
+                        case iload_3:
+                        case impdep1:
+                        case impdep2:
+                        case imul:
+                        case ineg:
+                        case ior:
+                        case irem:
+                        case ireturn:
+                        case ishl:
+                        case ishr:
+                        case istore_0:
+                        case istore_1:
+                        case istore_2:
+                        case istore_3:
+                        case isub:
+                        case iushr:
+                        case ixor:
+                        case l2d:
+                        case l2f:
+                        case l2i:
+                        case ladd:
+                        case laload:
+                        case land:
+                        case lastore:
+                        case lcmp:
+                        case lconst_0:
+                        case lconst_1:
+                        case ldiv_:
+                        case lload_0:
+                        case lload_1:
+                        case lload_2:
+                        case lload_3:
+                        case lmul:
+                        case lneg:
+                        case lor:
+                        case lrem:
+                        case lreturn:
+                        case lshl:
+                        case lshr:
+                        case lstore_0:
+                        case lstore_1:
+                        case lstore_2:
+                        case lstore_3:
+                        case lsub:
+                        case lushr:
+                        case lxor:
+                        case monitorenter:
+                        case monitorexit:
+                        case nop:
+                        case pop:
+                        case pop2:
+                        case return_:
+                        case saload:
+                        case sastore:
                         case swap:
                             fprintf(saida, "%s\n", op_codesJVM[*nextCode]);
                             // incrementa o iterador
@@ -1691,14 +1542,14 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                             // incrementa o iterador 2 vezes
                             offset +=2;
                             break;
-                            
+
                             //  signed integer (s1)
                         case bipush:
                             fprintf(saida, "%s", op_codesJVM[*nextCode]);
                             fprintf(saida, "\t%" PRId8 "\n", *(nextCode+1));
                             offset +=2;
                             break;
-                            
+
                             //  array type (uint8_t)
                         case newarray:
                             fprintf(saida, "%s\t", op_codesJVM[*nextCode]);
@@ -1736,7 +1587,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                             }
                             offset +=2;
                             break;
-                        
+
                         //  CONSTANTE pool index (integer, float, string) (uint8_t)
                     case ldc:
                         fprintf(saida, "%s", op_codesJVM[*nextCode]);
@@ -1763,7 +1614,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         }
                         offset +=2;
                         break;
-                        
+
                         // 2 bytes
                         //  constant_pool index (class) (uint16_t)
                     case anewarray:
@@ -1782,14 +1633,14 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         else{
                             uint16_t    name_index = cp_a0->u.Class.name_index;
                             cp_a0 = cf->constant_pool + name_index - 1;
-                            
+
                             fprintf(saida, "\t<");
                             printConstUtf8(cp_a0, saida);
                             fprintf(saida, ">\n");
                         }
                         offset +=3;
                         break;
-                        
+
                         //  branch offset (s2)
                     case goto_:
                     case if_acmpeq:
@@ -1814,7 +1665,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         fprintf(saida, "\t%" PRId32 "\t(%+" PRId32 ")\n", (int32_t) offset + branch, branch);
                         offset +=3;
                         break;
-                        
+
                         //  CONSTANTE pool index (integer, float, string) (uint16_t)
                     case ldc_w:
                         fprintf(saida, "%s", op_codesJVM[*nextCode]);
@@ -1842,7 +1693,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         }
                         offset +=3;
                         break;
-                        
+
                         //  CONSTANTE pool index (fieldref; methodref) (uint16_t)
                     case getfield:
                     case getstatic:
@@ -1862,7 +1713,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         else{
                             uint16_t    name_index = cp_a0->u.Ref.name_index;
                             uint16_t    name_and_type_index = cp_a0->u.Ref.name_and_type_index;
-                            
+
                             cp_a0 = cf->constant_pool + name_index - 1;
                             if(cp_a0->tag != CONSTANT_Class){
                                 printf("\nEROOOOU: %s nao referencia um CONSTANTE_ref valido. Verifique\n", op_codesJVM[*nextCode]);
@@ -1871,10 +1722,10 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                             else{
                                 uint16_t name_index = cp_a0->u.Class.name_index;
                                 cp_a0 = cf->constant_pool + name_index - 1;
-                                
+
                                 fprintf(saida, "\t<");
                                 printConstUtf8(cp_a0, saida);
-                                
+
                                 cp_a0 = cf->constant_pool + name_and_type_index - 1;
                                 if(cp_a0->tag != CONSTANT_NameAndType){
                                     printf("\nEROOOOU: %s nao referencia um CONSTANTE_ref valido. Verifique\n",
@@ -1884,17 +1735,17 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                                 else{
                                     name_index = cp_a0->u.NameAndType.name_index;
                                     cp_a0 = cf->constant_pool + name_index - 1;
-                                    
+
                                     fprintf(saida, ".");
                                     printConstUtf8(cp_a0, saida);
                                     fprintf(saida, ">\n");
                                 }
                             }
-                            
+
                         }
                         offset +=3;
                         break;
-                        
+
                         //  CONSTANTE pool index (long, double) (uint16_t)
                     case ldc2_w:
                         fprintf(saida, "%s", op_codesJVM[*nextCode]);
@@ -1942,14 +1793,14 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         }
                         offset +=3;
                         break;
-                        
+
                         //  signed short (s2)
                     case sipush:
                         fprintf(saida, "%s", op_codesJVM[*nextCode]);
                         fprintf(saida, "\t%" PRId16 "\n", *(nextCode+1));
                         offset +=3;
                         break;
-                        
+
                         //  unsigned byte (uint8_t); signed byte (s1)
                     case iinc: // 1 byte 1 byte
                         fprintf(saida, "%s", op_codesJVM[*nextCode]);
@@ -1972,7 +1823,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         else{
                             uint16_t    name_index = cp_a0->u.Class.name_index;
                             cp_a0 = cf->constant_pool + name_index - 1;
-                            
+
                             fprintf(saida, "\t<");
                             printConstUtf8(cp_a0, saida);
                             fprintf(saida, ">");
@@ -1980,7 +1831,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         fprintf(saida, "\tdim %" PRIu8 "\n", *(nextCode+3));
                         offset +=4;
                         break;
-                        
+
                         // 4 bytes
                         // branch offset (uint32_t)
                     case goto_w:
@@ -1991,7 +1842,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         fprintf(saida, "\t%" PRIu32 "\t(+%" PRIu32 ")\n", offset + branch, branch);
                         offset +=5;
                         break;
-                        
+
                         // constant_pool index (uint16_t); unsigned byte (uint8_t); unsigned byte (uint8_t)
                     case invokeinterface:
                     case invokedynamic:
@@ -2007,7 +1858,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         else{
                             uint16_t    name_index = cp_a0->u.Ref.name_index;
                             uint16_t    name_and_type_index = cp_a0->u.Ref.name_and_type_index;
-                            
+
                             cp_a0 = cf->constant_pool + name_index - 1;
                             if(cp_a0->tag != CONSTANT_Class){
                                 printf("\n[EROOOOU] %s nao referencia um CONSTANT_ref valido. Verifique\n",
@@ -2017,10 +1868,10 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                             else{
                                 uint16_t    name_index = cp_a0->u.Class.name_index;
                                 cp_a0 = cf->constant_pool + name_index - 1;
-                                
+
                                 fprintf(saida, "\t<");
                                 printConstUtf8(cp_a0, saida);
-                                
+
                                 cp_a0 = cf->constant_pool + name_and_type_index - 1;
                                 if(cp_a0->tag != CONSTANT_NameAndType){
                                     printf("\n[EROOOOU] %s nao referencia um CONSTANT_ref valido. Verifique\n",op_codesJVM[*nextCode]);
@@ -2029,7 +1880,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                                 else{
                                     name_index = cp_a0->u.NameAndType.name_index;
                                     cp_a0 = cf->constant_pool + name_index - 1;
-                                    
+
                                     fprintf(saida, ".");
                                     printConstUtf8(cp_a0, saida);
                                     fprintf(saida, ">");
@@ -2039,7 +1890,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         }
                         offset +=5;
                         break;
-                        
+
                         // 4 ou + bytes
                         //  <0-3 byte pad>; default (s4); n (s4); key1, offobtain_label1 ... keyn, offobtain_labeln (s4)
                     case lookupswitch:
@@ -2047,12 +1898,12 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         i = (offset+1) % 4;
                         default_ = (*((1+i) + nextCode) << 24) | (*((2+i) + nextCode) << 16) |
                         (*((3+i) + nextCode) << 8) | *((4+i) + nextCode);
-                        
+
                         n = (*((5+i) + nextCode) << 24) | (*((6+i) + nextCode) << 16) |
                         (*((7+i) + nextCode) << 8) | *((8+i) + nextCode);
                         i += 8;
                         fprintf(saida,"\t%" PRId32 "\n", n);
-                        
+
                         int32_t key, offobtain_label;
                         for(uint32_t j = 0; j < n; j++){
                             fprintf(saida,"\t\t\t\t\t%" PRIu32, lineNumber++);
@@ -2072,25 +1923,25 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                         offset +=i;
                         offset++;
                         break;
-                        
+
                         //  <0-3 byte pad>; default (s4); low (s4); high (s4); label1 ... labeln (s4)
                     case tableswitch:
                         fprintf(saida, "%s", op_codesJVM[*nextCode]);
                         i = (offset+1) % 4;
                         default_ = (*((1+i) + nextCode) << 24) | (*((2+i) + nextCode) << 16) |
                         (*((3+i) + nextCode) << 8) | *((4+i) + nextCode);
-                        
+
                         int32_t low = (*((5+i) + nextCode) << 24) | (*((6+i) + nextCode) << 16) |
                         (*((7+i) + nextCode) << 8) | *((8+i) + nextCode);
-                        
+
                         int32_t high = (*((9+i) + nextCode) << 24) | (*((10+i) + nextCode) << 16) |
                         (*((11+i) + nextCode) << 8) | *((12+i) + nextCode);
-                        
+
                         i += 12;
                         fprintf(saida, "\t%" PRId32 " to %" PRId32 "\n", low, high);
-                        
+
                         n = high - low + 1;
-                        
+
                         int32_t label;
                         for(uint32_t j = 0; j < n; j++){
                             fprintf(saida,"\t\t\t\t\t%" PRIu32, lineNumber++);
@@ -2157,7 +2008,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     constant_pool_info  * cp_a0 = cf->constant_pool + (attributes_aux->u.Code.exception_table + i)->catch_type - 1;
                     printConstantClass(cf, cp_a0, saida);
                     fprintf(saida,"\n");
-                    
+
                 }
             }
             fprintf(saida, "\n\t\tMiscellaneous:\n");
@@ -2239,7 +2090,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     fprintf(saida,"\t\t\t\t%" PRId16, i);
                     fprintf(saida,"\t%" PRId16, ((attributes_aux->u.LineNumberTable.line_number_table)+i)->start_pc);
                     fprintf(saida,"\t%" PRId16 "\n",
-                            ((attributes_aux->u.LineNumberTable.line_number_table)+i)->line_number);            
+                            ((attributes_aux->u.LineNumberTable.line_number_table)+i)->line_number);
                 }
                 break;
             case LOCAL_VARIABLE_TABLE:
@@ -2250,7 +2101,7 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                 for(uint16_t i = 0; i < attributes_aux->u.LocalVariableTable.local_variable_table_length; i++){
                     fprintf(saida,"\t\t\t%" PRId16, i);
                     fprintf(saida,"\t%" PRId16,
-                            ((attributes_aux->u.LocalVariableTable.local_variable_table)+i)->start_pc);     
+                            ((attributes_aux->u.LocalVariableTable.local_variable_table)+i)->start_pc);
                     fprintf(saida,"\t%" PRId16,
                             ((attributes_aux->u.LocalVariableTable.local_variable_table)+i)->length);
                     fprintf(saida,"\t%" PRId16,
@@ -2264,9 +2115,9 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                     printConstUtf8(cp_a0, saida);
                     fprintf(saida,"\t");
                     cp_a0 = cf->constant_pool + (((attributes_aux->u.LocalVariableTable.local_variable_table)+i)->descriptor_index) - 1;
-                    printConstUtf8(cp_a0, saida);   
+                    printConstUtf8(cp_a0, saida);
                     fprintf(saida, "\n");
-                    
+
                 }
                 break;
             case SOURCE_FILE:
@@ -2280,12 +2131,12 @@ void showAttributes(field_info * fd_in, method_info * mt_in, attribute_info * at
                 else{
                     fprintf(saida, "\t");
                     printConstUtf8(cp_a0, saida);
-                    fprintf(saida, "\n");   
+                    fprintf(saida, "\n");
                 }
                 break;
             case UNKNOWN:
                 /*              // IGNORANDO ATRIBUTOS DESCONHECIDOS*/
-                break;          
+                break;
         }
         attributes_aux++;
     }
@@ -2326,7 +2177,7 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
         // se campo eh Class name
         case 'c':
             cp_a0 = cf->constant_pool + constPool->u.Ref.name_index - 1;
-            
+
             // se nao eh CONSTANT_Class
             if(cp_a0->tag != CONSTANT_Class)
             {
@@ -2347,11 +2198,11 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
                 }
             }
             break;
-            
+
         // se campo eh Name and type
         case 'n':
             cp_a0 = cf->constant_pool + constPool->u.Ref.name_and_type_index - 1;
-            
+
             // se nao eh CONSTANT_NameAndType
             if(cp_a0->tag != CONSTANT_NameAndType)
             {
@@ -2371,7 +2222,7 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
                 {
                     printConstUtf8(cp_a0, saida);
                 }
-                
+
                 cp_a2 = cf->constant_pool + cp_a2->u.NameAndType.descriptor_index - 1;
                 if(cp_a2->tag != CONSTANT_Utf8)
                 {
@@ -2385,7 +2236,7 @@ void printConstantRef(ClassFile * cf, constant_pool_info * constPool,char tipo_i
             }
             break;
     }
-    
+
 }
 
 // imprime no arquivo de saida os valores apontados pelo CONSTANT_String
@@ -2409,24 +2260,24 @@ void printConstantString(ClassFile * cf, constant_pool_info * constPool, FILE * 
 void printConstantNameAndType(ClassFile * cf, constant_pool_info * constPool, char descritor_nome, FILE * saida)
 {
     constant_pool_info * cp_a0 = constPool;
-    
+
     // Name
-    if (descritor_nome == 'n') 
+    if (descritor_nome == 'n')
     {
         cp_a0 = cf->constant_pool + cp_a0->u.NameAndType.name_index - 1;
-        // se nao eh CONSTANT_Utf8   
+        // se nao eh CONSTANT_Utf8
         if(cp_a0->tag != CONSTANT_Utf8)
         {
             puts("\n[EROOOOU] valor da tag invalido (Diferente de CONSTANT_Utf8). Verifique\n");
             exit(EXIT_FAILURE);
         }
-        // se eh CONSTANT_Utf8 
+        // se eh CONSTANT_Utf8
         else
         {
             printConstUtf8(cp_a0,saida);
         }
-    } 
-    
+    }
+
     // Descriptor
     else if (descritor_nome == 'd') {
         cp_a0 = cf->constant_pool + cp_a0->u.NameAndType.descriptor_index- 1;
@@ -2466,8 +2317,8 @@ void unloadClassFile(ClassFile * cf)
         free(cf->attributes);
     }
     // libera a contant pool - precisa de fc pq precisa liberar as CONSTANT_Utf8
-    unloadConstantPool(cf); 
-    // libera o classfile  
+    unloadConstantPool(cf);
+    // libera o classfile
     free(cf);
 }
 
@@ -2496,12 +2347,12 @@ void unloadFields(ClassFile * cf)
 void unloadMethods(ClassFile * cf)
 {
     for(method_info * mt_in = cf->methods; mt_in < (cf->methods + cf->methods_count); mt_in++)
-    { 
+    {
         for(attribute_info * attr = mt_in->attributes; attr < (mt_in->attributes + mt_in->attributes_count); attr++)
         {
             unloadAttribute(attr, cf);
         }
-       
+
         if(mt_in->attributes_count)
         {
             free(mt_in->attributes);
@@ -2520,13 +2371,13 @@ void unloadAttribute(attribute_info * attr, ClassFile * cf){
             break;
         case CODE:
             if(attr->u.Code.code_length){
-                free(attr->u.Code.code);                
+                free(attr->u.Code.code);
             }
-            
+
             if(attr->u.Code.exception_table_length){
                 free(attr->u.Code.exception_table);
             }
-            
+
             for(attribute_info * attr_ = attr->u.Code.attributes;
                 attr_ < (attr->u.Code.attributes + attr->u.Code.attributes_count); attr_++){
                 unloadAttribute(attr_, cf);
@@ -2534,12 +2385,12 @@ void unloadAttribute(attribute_info * attr, ClassFile * cf){
             if(attr->u.Code.attributes_count){
                 free(attr->u.Code.attributes);
             }
-            
+
             break;
         case DEPRECATED:
             break;
         case EXCEPTIONS:
-            free(attr->u.Exceptions.exception_index_table);                 
+            free(attr->u.Exceptions.exception_index_table);
             break;
         case INNER_CLASSES:
             if(attr->u.InnerClasses.number_of_classes){
@@ -2561,7 +2412,7 @@ void unloadAttribute(attribute_info * attr, ClassFile * cf){
         case SOURCE_FILE:
             break;
         case UNKNOWN:
-            break;                          
+            break;
     }
 }
 
@@ -2581,14 +2432,14 @@ void unloadConstantPool(ClassFile * cf){
 }
 
 // array de mnemônicos opcodes.h
-char *op_codesJVM[] = 
+char *op_codesJVM[] =
 {
-    "nop", "aconst_null", "iconst_m1", "iconst_0", "iconst_1", 
+    "nop", "aconst_null", "iconst_m1", "iconst_0", "iconst_1",
     "iconst_2", "iconst_3", "iconst_4", "iconst_5", "lconst_0",
-    "lconst_1", "fconst_0", "fconst_1", "fconst_2", "dconst_0", 
-    "dconst_1", "bipush", "sipush", "ldc", "ldc_w", "ldc2_w", 
+    "lconst_1", "fconst_0", "fconst_1", "fconst_2", "dconst_0",
+    "dconst_1", "bipush", "sipush", "ldc", "ldc_w", "ldc2_w",
     "iload", "lload", "fload","dload", "aload", "iload_0", "iload_1",
-    "iload_2", "iload_3", "lload_0", "lload_1", "lload_2", "lload_3", 
+    "iload_2", "iload_3", "lload_0", "lload_1", "lload_2", "lload_3",
     "fload_0", "fload_1", "fload_2", "fload_3", "dload_0", "dload_1",
     "dload_2", "dload_3", "aload_0", "aload_1", "aload_2", "aload_3",
     "iaload", "laload", "faload", "daload", "aaload", "baload", "caload",
@@ -2612,7 +2463,7 @@ char *op_codesJVM[] =
     "invokespecial", "invokestatic", "invokeinterface", "invokedynamic",
     "new", "newarray", "anewarray", "arraylength", "athrow", "checkcast",
     "instanceof", "monitorenter", "monitorexit", "wide", "multianewarray",
-    "ifnull", "ifnonnull", "goto_w", "jsr_w", "breakpoint", 
+    "ifnull", "ifnonnull", "goto_w", "jsr_w", "breakpoint",
     NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
