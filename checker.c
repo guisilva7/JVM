@@ -1,12 +1,6 @@
 #include "checker.h"
 
 /*==========================================*/
-// função VerificaBytecode
-void VerificaBytecode(attribute_info *attr, ClassFile *arq) {
-
-}  // fim da funcao VerificaBytecode
-
-/*==========================================*/
 // função DescritorCampo
 bool DescritorCampo(uint16_t index, constant_pool_info *cp) {
 	uint16_t comprimento = cp->u.Utf8.length;
@@ -162,6 +156,147 @@ void AcessoFlags(ClassFile *arq) {
 		}
 	}
 }  // fim da função verifyAccessFlag
+/*==========================================*/
+// função VerificaConstantPool
+void VerificaConstantPool(ClassFile *arq) {
+	// Verify Constant Pool
+	constant_pool_info *cp;
+	for (uint16_t i = 0; i < (arq->constant_pool_count - 1); i++) {
+		cp = arq->constant_pool + i;
+		switch (cp->tag) {
+			case CONSTANT_Class:
+				if ((arq->constant_pool + cp->u.Class.name_index - 1)->tag !=
+					CONSTANT_Utf8) {
+					puts("Error: do nome de index de classe");
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case CONSTANT_Fieldref:
+			case CONSTANT_Methodref:
+			case CONSTANT_InterfaceMethodref:
+				if ((arq->constant_pool + cp->u.Ref.name_index - 1)->tag !=
+					CONSTANT_Class) {
+					puts("Error:: referencia ao indice de classe invalido");
+					exit(EXIT_FAILURE);
+				}
+				if ((arq->constant_pool + cp->u.Ref.name_and_type_index -
+					 1)->tag != CONSTANT_NameAndType) {
+					puts("Error: de name_and_type index");
+					exit(EXIT_FAILURE);
+				}
+				if (cp->tag != CONSTANT_Fieldref) {
+					constant_pool_info *cp_auxiliar;
+					cp_auxiliar = arq->constant_pool + cp->u.Ref.name_and_type_index - 1;
+					cp_auxiliar = arq->constant_pool + cp_auxiliar->u.NameAndType.descriptor_index - 1;
+					if (cp_auxiliar->tag != CONSTANT_Utf8) {
+						puts("Error: de indice de descritor");
+						exit(EXIT_FAILURE);
+					}
+					if ((cp_auxiliar->u.Utf8).length < 3) {
+						puts("Error: de indice de descritor");
+						exit(EXIT_FAILURE);
+					}
+					if (((cp_auxiliar->u.Utf8).bytes)[0] != '(') {
+						puts("Error: de indice de descritor");
+						exit(EXIT_FAILURE);
+					}
+				}
+				break;
+			case CONSTANT_String:
+				if ((arq->constant_pool + cp->u.String.string_index -
+					 1)->tag != CONSTANT_Utf8) {
+					puts("indice de string invalidoa");
+					exit(EXIT_FAILURE);
+				}
+				break;
+			case CONSTANT_Integer:
+			case CONSTANT_Float:
+			case CONSTANT_Long:
+			case CONSTANT_Double:
+				break;
+			case CONSTANT_NameAndType:
+				if ((arq->constant_pool + cp->u.NameAndType.name_index -
+					 1)->tag != CONSTANT_Utf8) {
+					puts("Error: indice NameAndType  invalido");
+					exit(EXIT_FAILURE);
+				}
+				constant_pool_info *cp_auxiliar;
+				if ((cp_auxiliar = arq->constant_pool +
+							  cp->u.NameAndType.descriptor_index - 1)
+						->tag != CONSTANT_Utf8) {
+					puts("Error: NameAndType descriptor_index invalido");
+					exit(EXIT_FAILURE);
+				}
+				if (cp_auxiliar->u.Utf8.length == 0) {
+					puts("Error: descritor invalido");
+					exit(EXIT_FAILURE);
+				}
+				uint16_t comprimento = cp_auxiliar->u.Utf8.length;
+				uint8_t *bytes = cp_auxiliar->u.Utf8.bytes;
+
+				char *string = (char *)cp_auxiliar->u.Utf8.bytes;
+				string[cp_auxiliar->u.Utf8.length] = '\0';
+				switch (*bytes) {
+					case BOOLEAN:
+					case BYTE:
+					case CHAR:
+					case DOUBLE:
+					case FLOAT:
+					case INT:
+					case LONG:
+					case SHORT:
+						if (comprimento != 1) {
+							puts("Error:  descritor invalido");
+							exit(EXIT_FAILURE);
+						}
+						break;
+					case REF_INST:
+						if (comprimento < 3 || bytes[comprimento - 1] != ';') {
+							puts("Error:  descritor invalido");
+							exit(EXIT_FAILURE);
+						}
+						break;
+					case REF_ARRAY:
+						if (comprimento < 2) {
+							puts("Error:  descritor invalido");
+							exit(EXIT_FAILURE);
+						}
+						uint16_t index = 0;
+						while ((*bytes) == REF_ARRAY) {
+							index++;
+							bytes++;
+						}
+						if (!DescritorCampo(index, cp_auxiliar)) {
+							puts("Error:  descritor invalido");
+							exit(EXIT_FAILURE);
+						}
+						break;
+					case '(':
+						if (comprimento < 3) {
+							puts("Error:  descritor invalido");
+							exit(EXIT_FAILURE);
+						}
+						if (!DescritorMetodo(cp_auxiliar, 1)) {
+							puts("Error:  descritor invalido");
+							exit(EXIT_FAILURE);
+						}
+						break;
+					default:
+						puts("Error:  descritor invalido");
+						exit(EXIT_FAILURE);
+						break;
+				}
+			case CONSTANT_Utf8:
+				break;
+		}
+	}
+}  // fim da função VerificaConstantPool
+
+
+// função VerificaBytecode
+void VerificaBytecode(attribute_info *attr, ClassFile *arq) {
+
+}  // fim da funcao VerificaBytecode
 
 
 
@@ -502,138 +637,3 @@ void SuperVerificador(ClassFile *arq, JVM *jvm) {
 		}
 	}
 }
-/*==========================================*/
-// função VerificaConstantPool
-void VerificaConstantPool(ClassFile *arq) {
-	// Verify Constant Pool
-	constant_pool_info *cp;
-	for (uint16_t i = 0; i < (arq->constant_pool_count - 1); i++) {
-		cp = arq->constant_pool + i;
-		switch (cp->tag) {
-			case CONSTANT_Class:
-				if ((arq->constant_pool + cp->u.Class.name_index - 1)->tag !=
-					CONSTANT_Utf8) {
-					puts("Error: do nome de index de classe");
-					exit(EXIT_FAILURE);
-				}
-				break;
-			case CONSTANT_Fieldref:
-			case CONSTANT_Methodref:
-			case CONSTANT_InterfaceMethodref:
-				if ((arq->constant_pool + cp->u.Ref.name_index - 1)->tag !=
-					CONSTANT_Class) {
-					puts("Error:: referencia ao indice de classe invalido");
-					exit(EXIT_FAILURE);
-				}
-				if ((arq->constant_pool + cp->u.Ref.name_and_type_index -
-					 1)->tag != CONSTANT_NameAndType) {
-					puts("Error: de name_and_type index");
-					exit(EXIT_FAILURE);
-				}
-				if (cp->tag != CONSTANT_Fieldref) {
-					constant_pool_info *cp_auxiliar;
-					cp_auxiliar = arq->constant_pool + cp->u.Ref.name_and_type_index - 1;
-					cp_auxiliar = arq->constant_pool + cp_auxiliar->u.NameAndType.descriptor_index - 1;
-					if (cp_auxiliar->tag != CONSTANT_Utf8) {
-						puts("Error: de indice de descritor");
-						exit(EXIT_FAILURE);
-					}
-					if ((cp_auxiliar->u.Utf8).length < 3) {
-						puts("Error: de indice de descritor");
-						exit(EXIT_FAILURE);
-					}
-					if (((cp_auxiliar->u.Utf8).bytes)[0] != '(') {
-						puts("Error: de indice de descritor");
-						exit(EXIT_FAILURE);
-					}
-				}
-				break;
-			case CONSTANT_String:
-				if ((arq->constant_pool + cp->u.String.string_index -
-					 1)->tag != CONSTANT_Utf8) {
-					puts("indice de string invalidoa");
-					exit(EXIT_FAILURE);
-				}
-				break;
-			case CONSTANT_Integer:
-			case CONSTANT_Float:
-			case CONSTANT_Long:
-			case CONSTANT_Double:
-				break;
-			case CONSTANT_NameAndType:
-				if ((arq->constant_pool + cp->u.NameAndType.name_index -
-					 1)->tag != CONSTANT_Utf8) {
-					puts("Error: indice NameAndType  invalido");
-					exit(EXIT_FAILURE);
-				}
-				constant_pool_info *cp_auxiliar;
-				if ((cp_auxiliar = arq->constant_pool +
-							  cp->u.NameAndType.descriptor_index - 1)
-						->tag != CONSTANT_Utf8) {
-					puts("Error: NameAndType descriptor_index invalido");
-					exit(EXIT_FAILURE);
-				}
-				if (cp_auxiliar->u.Utf8.length == 0) {
-					puts("Error: descritor invalido");
-					exit(EXIT_FAILURE);
-				}
-				uint16_t comprimento = cp_auxiliar->u.Utf8.length;
-				uint8_t *bytes = cp_auxiliar->u.Utf8.bytes;
-
-				char *string = (char *)cp_auxiliar->u.Utf8.bytes;
-				string[cp_auxiliar->u.Utf8.length] = '\0';
-				switch (*bytes) {
-					case BOOLEAN:
-					case BYTE:
-					case CHAR:
-					case DOUBLE:
-					case FLOAT:
-					case INT:
-					case LONG:
-					case SHORT:
-						if (comprimento != 1) {
-							puts("Error:  descritor invalido");
-							exit(EXIT_FAILURE);
-						}
-						break;
-					case REF_INST:
-						if (comprimento < 3 || bytes[comprimento - 1] != ';') {
-							puts("Error:  descritor invalido");
-							exit(EXIT_FAILURE);
-						}
-						break;
-					case REF_ARRAY:
-						if (comprimento < 2) {
-							puts("Error:  descritor invalido");
-							exit(EXIT_FAILURE);
-						}
-						uint16_t index = 0;
-						while ((*bytes) == REF_ARRAY) {
-							index++;
-							bytes++;
-						}
-						if (!DescritorCampo(index, cp_auxiliar)) {
-							puts("Error:  descritor invalido");
-							exit(EXIT_FAILURE);
-						}
-						break;
-					case '(':
-						if (comprimento < 3) {
-							puts("Error:  descritor invalido");
-							exit(EXIT_FAILURE);
-						}
-						if (!DescritorMetodo(cp_auxiliar, 1)) {
-							puts("Error:  descritor invalido");
-							exit(EXIT_FAILURE);
-						}
-						break;
-					default:
-						puts("Error:  descritor invalido");
-						exit(EXIT_FAILURE);
-						break;
-				}
-			case CONSTANT_Utf8:
-				break;
-		}
-	}
-}  // fim da função VerificaConstantPool

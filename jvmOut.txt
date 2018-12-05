@@ -4,38 +4,40 @@ ByteCode viewer
 Magic:						0xCAFEBABE
 Minor version:				0
 Major version:				46	[1.2]
-Constant pool count:		21
-Access flags:				0x0421	[abstract super public ]
-This class:					cp_info #3	<Animal>
-Super class:				cp_info #4	<java/lang/Object>
+Constant pool count:		59
+Access flags:				0x0021	[super public ]
+This class:					cp_info #1	<Testar>
+Super class:				cp_info #3	<java/lang/Object>
 Interfaces count:			0
 Fields count:				1
 Methods count:				4
 Attributes count:			1
 
 #Constant Pool
-[1] CONSTANT_Methodref_info
-	Class name:				cp_info #4	<java/lang/Object>
-	Name and type:			cp_info #17	<<init>()V>
-[2] CONSTANT_Fieldref_info
-	Class name:				cp_info #3	<Animal>
-	Name and type:			cp_info #18	<patasI>
+[1] CONSTANT_Class_info
+	Class name:				cp_info #2	<Testar>
+[2] CONSTANT_Utf8_info
+	Length of byte array:	6
+	Length of string:		6
+	String:					Testar
 [3] CONSTANT_Class_info
-	Class name:				cp_info #19	<Animal>
-[4] CONSTANT_Class_info
-	Class name:				cp_info #20	<java/lang/Object>
+	Class name:				cp_info #4	<java/lang/Object>
+[4] CONSTANT_Utf8_info
+	Length of byte array:	16
+	Length of string:		16
+	String:					java/lang/Object
 [5] CONSTANT_Utf8_info
-	Length of byte array:	5
-	Length of string:		5
-	String:					patas
+	Length of byte array:	1
+	Length of string:		1
+	String:					n
 [6] CONSTANT_Utf8_info
 	Length of byte array:	1
 	Length of string:		1
 	String:					I
 [7] CONSTANT_Utf8_info
-	Length of byte array:	6
-	Length of string:		6
-	String:					<init>
+	Length of byte array:	8
+	Length of string:		8
+	String:					<clinit>
 [8] CONSTANT_Utf8_info
 	Length of byte array:	3
 	Length of string:		3
@@ -44,58 +46,186 @@ Attributes count:			1
 	Length of byte array:	4
 	Length of string:		4
 	String:					Code
-[10] CONSTANT_Utf8_info
+[10] CONSTANT_Fieldref_info
+	Class name:				cp_info #1	<Testar>
+	Name and type:			cp_info #11	<nI>
+[11] CONSTANT_NameAndType_info
+	Name:					cp_info #5	<n>
+	Descriptor:				cp_info #6	<I>
+[12] CONSTANT_Utf8_info
 	Length of byte array:	15
 	Length of string:		15
 	String:					LineNumberTable
-[11] CONSTANT_Utf8_info
-	Length of byte array:	9
-	Length of string:		9
-	String:					locomover
-[12] CONSTANT_Utf8_info
-	Length of byte array:	5
-	Length of string:		5
-	String:					comer
 [13] CONSTANT_Utf8_info
+	Length of byte array:	18
+	Length of string:		18
+	String:					LocalVariableTable
+[14] CONSTANT_Utf8_info
+	Length of byte array:	6
+	Length of string:		6
+	String:					<init>
+[15] CONSTANT_Methodref_info
+	Class name:				cp_info #3	<java/lang/Object>
+	Name and type:			cp_info #16	<<init>()V>
+[16] CONSTANT_NameAndType_info
+	Name:					cp_info #14	<<init>>
+	Descriptor:				cp_info #8	<()V>
+[17] CONSTANT_Utf8_info
+	Length of byte array:	4
+	Length of string:		4
+	String:					this
+[18] CONSTANT_Utf8_info
 	Length of byte array:	8
 	Length of string:		8
-	String:					setPatas
-[14] CONSTANT_Utf8_info
+	String:					LTestar;
+[19] CONSTANT_Utf8_info
+	Length of byte array:	4
+	Length of string:		4
+	String:					main
+[20] CONSTANT_Utf8_info
+	Length of byte array:	22
+	Length of string:		22
+	String:					([Ljava/lang/String;)V
+[21] CONSTANT_Fieldref_info
+	Class name:				cp_info #22	<java/lang/System>
+	Name and type:			cp_info #24	<outLjava/io/PrintStream;>
+[22] CONSTANT_Class_info
+	Class name:				cp_info #23	<java/lang/System>
+[23] CONSTANT_Utf8_info
+	Length of byte array:	16
+	Length of string:		16
+	String:					java/lang/System
+[24] CONSTANT_NameAndType_info
+	Name:					cp_info #25	<out>
+	Descriptor:				cp_info #26	<Ljava/io/PrintStream;>
+[25] CONSTANT_Utf8_info
+	Length of byte array:	3
+	Length of string:		3
+	String:					out
+[26] CONSTANT_Utf8_info
+	Length of byte array:	21
+	Length of string:		21
+	String:					Ljava/io/PrintStream;
+[27] CONSTANT_String_info
+	String:				cp_info #28	<Chamando Funcao...>
+[28] CONSTANT_Utf8_info
+	Length of byte array:	18
+	Length of string:		18
+	String:					Chamando Funcao...
+[29] CONSTANT_Methodref_info
+	Class name:				cp_info #30	<java/io/PrintStream>
+	Name and type:			cp_info #32	<println(Ljava/lang/String;)V>
+[30] CONSTANT_Class_info
+	Class name:				cp_info #31	<java/io/PrintStream>
+[31] CONSTANT_Utf8_info
+	Length of byte array:	19
+	Length of string:		19
+	String:					java/io/PrintStream
+[32] CONSTANT_NameAndType_info
+	Name:					cp_info #33	<println>
+	Descriptor:				cp_info #34	<(Ljava/lang/String;)V>
+[33] CONSTANT_Utf8_info
+	Length of byte array:	7
+	Length of string:		7
+	String:					println
+[34] CONSTANT_Utf8_info
+	Length of byte array:	21
+	Length of string:		21
+	String:					(Ljava/lang/String;)V
+[35] CONSTANT_Methodref_info
+	Class name:				cp_info #1	<Testar>
+	Name and type:			cp_info #36	<calcFat(I)V>
+[36] CONSTANT_NameAndType_info
+	Name:					cp_info #37	<calcFat>
+	Descriptor:				cp_info #38	<(I)V>
+[37] CONSTANT_Utf8_info
+	Length of byte array:	7
+	Length of string:		7
+	String:					calcFat
+[38] CONSTANT_Utf8_info
 	Length of byte array:	4
 	Length of string:		4
 	String:					(I)V
-[15] CONSTANT_Utf8_info
+[39] CONSTANT_Utf8_info
+	Length of byte array:	4
+	Length of string:		4
+	String:					args
+[40] CONSTANT_Utf8_info
+	Length of byte array:	19
+	Length of string:		19
+	String:					[Ljava/lang/String;
+[41] CONSTANT_Class_info
+	Class name:				cp_info #42	<java/lang/StringBuffer>
+[42] CONSTANT_Utf8_info
+	Length of byte array:	22
+	Length of string:		22
+	String:					java/lang/StringBuffer
+[43] CONSTANT_String_info
+	String:				cp_info #44	<Fatorial de 10 eh >
+[44] CONSTANT_Utf8_info
+	Length of byte array:	18
+	Length of string:		18
+	String:					Fatorial de 10 eh 
+[45] CONSTANT_Methodref_info
+	Class name:				cp_info #41	<java/lang/StringBuffer>
+	Name and type:			cp_info #46	<<init>(Ljava/lang/String;)V>
+[46] CONSTANT_NameAndType_info
+	Name:					cp_info #14	<<init>>
+	Descriptor:				cp_info #34	<(Ljava/lang/String;)V>
+[47] CONSTANT_Methodref_info
+	Class name:				cp_info #41	<java/lang/StringBuffer>
+	Name and type:			cp_info #48	<append(I)Ljava/lang/StringBuffer;>
+[48] CONSTANT_NameAndType_info
+	Name:					cp_info #49	<append>
+	Descriptor:				cp_info #50	<(I)Ljava/lang/StringBuffer;>
+[49] CONSTANT_Utf8_info
+	Length of byte array:	6
+	Length of string:		6
+	String:					append
+[50] CONSTANT_Utf8_info
+	Length of byte array:	27
+	Length of string:		27
+	String:					(I)Ljava/lang/StringBuffer;
+[51] CONSTANT_Methodref_info
+	Class name:				cp_info #41	<java/lang/StringBuffer>
+	Name and type:			cp_info #52	<toString()Ljava/lang/String;>
+[52] CONSTANT_NameAndType_info
+	Name:					cp_info #53	<toString>
+	Descriptor:				cp_info #54	<()Ljava/lang/String;>
+[53] CONSTANT_Utf8_info
+	Length of byte array:	8
+	Length of string:		8
+	String:					toString
+[54] CONSTANT_Utf8_info
+	Length of byte array:	20
+	Length of string:		20
+	String:					()Ljava/lang/String;
+[55] CONSTANT_Utf8_info
+	Length of byte array:	8
+	Length of string:		8
+	String:					fatorial
+[56] CONSTANT_Utf8_info
+	Length of byte array:	1
+	Length of string:		1
+	String:					i
+[57] CONSTANT_Utf8_info
 	Length of byte array:	10
 	Length of string:		10
 	String:					SourceFile
-[16] CONSTANT_Utf8_info
+[58] CONSTANT_Utf8_info
 	Length of byte array:	11
 	Length of string:		11
-	String:					Animal.java
-[17] CONSTANT_NameAndType_info
-	Name:					cp_info #7	<<init>>
-	Descriptor:				cp_info #8	<()V>
-[18] CONSTANT_NameAndType_info
-	Name:					cp_info #5	<patas>
-	Descriptor:				cp_info #6	<I>
-[19] CONSTANT_Utf8_info
-	Length of byte array:	6
-	Length of string:		6
-	String:					Animal
-[20] CONSTANT_Utf8_info
-	Length of byte array:	16
-	Length of string:		16
-	String:					java/lang/Object
+	String:					Testar.java
 
 #Interfaces
 
 #Fields
 Member count:				1
 
-[0]	patas
-	Name:		cp_info #5	<patas>
+[0]	n
+	Name:		cp_info #5	<n>
 	Descriptor:		cp_info #6	<I>
-	Access Flags:		0x0002		[private ]
+	Access Flags:		0x0008		[static ]
 
 	Field's attributes count:	0
 
@@ -105,8 +235,58 @@ Member count:				1
 #Methods
 Member count:				4
 
-[0]	<init>
-Name:						cp_info #7	<<init>>
+[0]	<clinit>
+Name:						cp_info #7	<<clinit>>
+Descriptor:					cp_info #8	<()V>
+Access flags:				0x0008		[static ]
+
+Methods's attr count:		1
+
+	Methods Attributes
+
+[0]	Code
+	Generic info:
+		Attribute name index:	cp_info #9	Code
+		Attribute lenght:	38
+	Specific info:
+		Bytecode:
+			line	offset
+			1	0	bipush	10
+			2	2	putstatic	#10	<Testar.n>
+			3	5	return
+
+			Exception Table Length:		0
+
+		Miscellaneous:
+				Max Stack:		1
+				Max locals:	0
+				Code length:			6
+
+		Code attributes count:	2
+
+	Attribute's Code Attributes
+
+	[0]	LineNumberTable
+		Generic info:
+			Attribute name index:	cp_info #12	LineNumberTable
+			Attribute lenght:	6
+		Specific info:
+				Line Number Table length:	1
+				Line Number Table:
+				Nr.	start_pc	line_number
+				0	0	2
+
+	[1]	LocalVariableTable
+		Generic info:
+			Attribute name index:	cp_info #13	LocalVariableTable
+			Attribute lenght:	2
+		Specific info:
+			Local variable table length:	0
+			Local variables table:
+			Nr.	start_pc	length	index	name_index	descriptor_index
+
+[1]	<init>
+Name:						cp_info #14	<<init>>
 Descriptor:					cp_info #8	<()V>
 Access flags:				0x0001		[public]
 
@@ -117,12 +297,12 @@ Methods's attr count:		1
 [0]	Code
 	Generic info:
 		Attribute name index:	cp_info #9	Code
-		Attribute lenght:	29
+		Attribute lenght:	47
 	Specific info:
 		Bytecode:
 			line	offset
 			1	0	aload_0
-			2	1	invokespecial	#1	<java/lang/Object.<init>>
+			2	1	invokespecial	#15	<java/lang/Object.<init>>
 			3	4	return
 
 			Exception Table Length:		0
@@ -132,24 +312,35 @@ Methods's attr count:		1
 				Max locals:	1
 				Code length:			5
 
-		Code attributes count:	1
+		Code attributes count:	2
 
 	Attribute's Code Attributes
 
 	[0]	LineNumberTable
 		Generic info:
-			Attribute name index:	cp_info #10	LineNumberTable
+			Attribute name index:	cp_info #12	LineNumberTable
 			Attribute lenght:	6
 		Specific info:
 				Line Number Table length:	1
 				Line Number Table:
 				Nr.	start_pc	line_number
-				0	0	15
+				0	0	1
 
-[1]	locomover
-Name:						cp_info #11	<locomover>
-Descriptor:					cp_info #8	<()V>
-Access flags:				0x0001		[public]
+	[1]	LocalVariableTable
+		Generic info:
+			Attribute name index:	cp_info #13	LocalVariableTable
+			Attribute lenght:	12
+		Specific info:
+			Local variable table length:	1
+			Local variables table:
+			Nr.	start_pc	length	index	name_index	descriptor_index
+			0	0	5	0	cp_info #17	cp_info #18
+								this	LTestar;
+
+[2]	main
+Name:						cp_info #19	<main>
+Descriptor:					cp_info #20	<([Ljava/lang/String;)V>
+Access flags:				0x0009		[static public]
 
 Methods's attr count:		1
 
@@ -158,114 +349,131 @@ Methods's attr count:		1
 [0]	Code
 	Generic info:
 		Attribute name index:	cp_info #9	Code
-		Attribute lenght:	25
+		Attribute lenght:	65
 	Specific info:
 		Bytecode:
 			line	offset
-			1	0	return
-
-			Exception Table Length:		0
-
-		Miscellaneous:
-				Max Stack:		0
-				Max locals:	1
-				Code length:			1
-
-		Code attributes count:	1
-
-	Attribute's Code Attributes
-
-	[0]	LineNumberTable
-		Generic info:
-			Attribute name index:	cp_info #10	LineNumberTable
-			Attribute lenght:	6
-		Specific info:
-				Line Number Table length:	1
-				Line Number Table:
-				Nr.	start_pc	line_number
-				0	0	21
-
-[2]	comer
-Name:						cp_info #12	<comer>
-Descriptor:					cp_info #8	<()V>
-Access flags:				0x0001		[public]
-
-Methods's attr count:		1
-
-	Methods Attributes
-
-[0]	Code
-	Generic info:
-		Attribute name index:	cp_info #9	Code
-		Attribute lenght:	25
-	Specific info:
-		Bytecode:
-			line	offset
-			1	0	return
-
-			Exception Table Length:		0
-
-		Miscellaneous:
-				Max Stack:		0
-				Max locals:	1
-				Code length:			1
-
-		Code attributes count:	1
-
-	Attribute's Code Attributes
-
-	[0]	LineNumberTable
-		Generic info:
-			Attribute name index:	cp_info #10	LineNumberTable
-			Attribute lenght:	6
-		Specific info:
-				Line Number Table length:	1
-				Line Number Table:
-				Nr.	start_pc	line_number
-				0	0	25
-
-[3]	setPatas
-Name:						cp_info #13	<setPatas>
-Descriptor:					cp_info #14	<(I)V>
-Access flags:				0x0001		[public]
-
-Methods's attr count:		1
-
-	Methods Attributes
-
-[0]	Code
-	Generic info:
-		Attribute name index:	cp_info #9	Code
-		Attribute lenght:	34
-	Specific info:
-		Bytecode:
-			line	offset
-			1	0	aload_0
-			2	1	iload_1
-			3	2	putfield	#2	<Animal.patas>
-			4	5	return
+			1	0	getstatic	#21	<java/lang/System.out>
+			2	3	ldc	#27	<Chamando Funcao...>
+			3	5	invokevirtual	#29	<java/io/PrintStream.println>
+			4	8	getstatic	#10	<Testar.n>
+			5	11	invokestatic	#35	<Testar.calcFat>
+			6	14	return
 
 			Exception Table Length:		0
 
 		Miscellaneous:
 				Max Stack:		2
-				Max locals:	2
-				Code length:			6
+				Max locals:	1
+				Code length:			15
 
-		Code attributes count:	1
+		Code attributes count:	2
 
 	Attribute's Code Attributes
 
 	[0]	LineNumberTable
 		Generic info:
-			Attribute name index:	cp_info #10	LineNumberTable
-			Attribute lenght:	10
+			Attribute name index:	cp_info #12	LineNumberTable
+			Attribute lenght:	14
 		Specific info:
-				Line Number Table length:	2
+				Line Number Table length:	3
 				Line Number Table:
 				Nr.	start_pc	line_number
-				0	0	30
-				1	5	31
+				0	0	4
+				1	8	5
+				2	14	6
+
+	[1]	LocalVariableTable
+		Generic info:
+			Attribute name index:	cp_info #13	LocalVariableTable
+			Attribute lenght:	12
+		Specific info:
+			Local variable table length:	1
+			Local variables table:
+			Nr.	start_pc	length	index	name_index	descriptor_index
+			0	0	15	0	cp_info #39	cp_info #40
+								args	[Ljava/lang/String;
+
+[3]	calcFat
+Name:						cp_info #37	<calcFat>
+Descriptor:					cp_info #38	<(I)V>
+Access flags:				0x0009		[static public]
+
+Methods's attr count:		1
+
+	Methods Attributes
+
+[0]	Code
+	Generic info:
+		Attribute name index:	cp_info #9	Code
+		Attribute lenght:	124
+	Specific info:
+		Bytecode:
+			line	offset
+			1	0	iconst_1
+			2	1	istore_1
+			3	2	iconst_1
+			4	3	istore_2
+			5	4	goto	14	(+10)
+			6	7	iload_1
+			7	8	iload_2
+			8	9	imul
+			9	10	istore_1
+			10	11	iinc	2 by 1
+			11	14	iload_2
+			12	15	iload_0
+			13	16	if_icmple	7	(-9)
+			14	19	getstatic	#21	<java/lang/System.out>
+			15	22	new	#41	<java/lang/StringBuffer>
+			16	25	dup
+			17	26	ldc	#43	<Fatorial de 10 eh >
+			18	28	invokespecial	#45	<java/lang/StringBuffer.<init>>
+			19	31	iload_1
+			20	32	invokevirtual	#47	<java/lang/StringBuffer.append>
+			21	35	invokevirtual	#51	<java/lang/StringBuffer.toString>
+			22	38	invokevirtual	#29	<java/io/PrintStream.println>
+			23	41	return
+
+			Exception Table Length:		0
+
+		Miscellaneous:
+				Max Stack:		4
+				Max locals:	3
+				Code length:			42
+
+		Code attributes count:	2
+
+	Attribute's Code Attributes
+
+	[0]	LineNumberTable
+		Generic info:
+			Attribute name index:	cp_info #12	LineNumberTable
+			Attribute lenght:	26
+		Specific info:
+				Line Number Table length:	6
+				Line Number Table:
+				Nr.	start_pc	line_number
+				0	0	11
+				1	2	12
+				2	7	13
+				3	11	12
+				4	19	16
+				5	41	17
+
+	[1]	LocalVariableTable
+		Generic info:
+			Attribute name index:	cp_info #13	LocalVariableTable
+			Attribute lenght:	32
+		Specific info:
+			Local variable table length:	3
+			Local variables table:
+			Nr.	start_pc	length	index	name_index	descriptor_index
+			0	0	42	0	cp_info #5	cp_info #6
+								n	I
+			1	2	40	1	cp_info #55	cp_info #6
+								fatorial	I
+			2	4	38	2	cp_info #56	cp_info #6
+								i	I
 
 #Attributes
 
@@ -273,7 +481,7 @@ Class Attributes Count:			1
 
 [0]	SourceFile
 Generic info:
-	Attribute name index:	cp_info #15	SourceFile
+	Attribute name index:	cp_info #57	SourceFile
 	Attribute lenght:	2
 Specific info:
-		Source file index:	cp_info #16	Animal.java
+		Source file index:	cp_info #58	Testar.java
