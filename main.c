@@ -13,8 +13,8 @@ int main(int argc, char **argv)
 		printf("Pra executar, digite:\n\tWINDOWS: jvm.exe class_file.class t|a"
 				 "\nou\tLINUX: ./jvm class_file.class t|a\n");
 	}
-	if(argc == 2 && (strcmp(argv[1],"easteregg") == 0 ? 1 : 0) ){
-		Easter();
+	else if(strcmp(argv[1],"easteregg") == 0 ? 1 : 0){
+		Easter(argv[2]);
 	}
 	// para executar a jvm
 	else if(argc == 2){
