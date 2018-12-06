@@ -866,7 +866,7 @@ void showConstantPool(ClassFile * cf, FILE * saida)
                             fprintf(saida, "\n\tDouble:\t\t%f\n", (double) s*m*pow(2, (e-1075)));
                         }
                 }
-                fprintf(saida, "[%" PRIu16 "]\t(muito grande pra por aqui)\n", ++i);
+                fprintf(saida, "[%" PRIu16 "]\t(large numeric continued)\n", ++i);
                 // pula por ser 64 bits
                 constPool++;
                 break;
